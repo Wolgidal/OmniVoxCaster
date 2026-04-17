@@ -50,6 +50,12 @@ echo.
 echo  [INFO] Pruefe GPU ...
 nvidia-smi >nul 2>&1
 if errorlevel 1 (
+    if exist "%ProgramFiles%\NVIDIA Corporation\NVSMI\nvidia-smi.exe" (
+        "%ProgramFiles%\NVIDIA Corporation\NVSMI\nvidia-smi.exe" >nul 2>&1
+    )
+)
+
+if errorlevel 1 (
     echo  [INFO] Keine NVIDIA GPU gefunden.
     echo  [INFO] Installiere CPU-Version von PyTorch.
     echo  [INFO] Die App funktioniert, ist aber langsamer.

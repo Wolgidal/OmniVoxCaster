@@ -1586,7 +1586,9 @@ class OmniVoxCasterApp(ctk.CTk):
                 try:
                     pre_buffer = []
                     pre_samples = 0
-                    target_samples = int(24000 * 1.5)
+                    # Puffer, um Verzögerungen bei der Generierung (besonders auf CPU) auszugleichen.
+                    # 5.0 Sekunden sollten ausreichen, um ein flüssiges Ergebnis zu gewährleisten.
+                    target_samples = int(24000 * 5.0)
 
                     while pre_samples < target_samples and not self._stop_playback:
                         try:
@@ -1622,6 +1624,9 @@ class OmniVoxCasterApp(ctk.CTk):
                                     break
                                 stream.write(chunk)
                             except queue.Empty:
+                                # Verhindert Hardware-Stottern (Buffer Underrun), falls
+                                # die KI kurz braucht, um den nächsten Satz zu berechnen.
+                                stream.write(np.zeros(int(24000 * 0.1), dtype="float32"))
                                 continue
                 except Exception as e:
                     print(f"[FEHLER im Audio-Player] {e}")
