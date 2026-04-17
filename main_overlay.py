@@ -1426,9 +1426,15 @@ class OmniVoxCasterApp(ctk.CTk):
     # ----------------------------------------------------------
     def _load_models(self):
         try:
+            if not torch.cuda.is_available():
+                try:
+                    torch.cuda.init()
+                    print(f"[WARN] CUDA nach init(): {torch.cuda.is_available()}")
+                except Exception as cuda_err:
+                    print(f"[WARN] CUDA nicht verfügbar: {cuda_err}")
             device = "cuda" if torch.cuda.is_available() else "cpu"
             hw_name = torch.cuda.get_device_name(0) if device == "cuda" else "CPU"
-            print(f"[INFO] Gerät: {hw_name}")
+            print(f"[INFO] torch: {torch.__version__}, Gerät: {hw_name}")
 
             print("[INFO] Lade TTS-Modell (XTTSv2) ...")
             os.environ["COQUI_TOS_AGREED"] = "1"

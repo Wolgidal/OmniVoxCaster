@@ -46,8 +46,22 @@ echo  [INFO] Aktualisiere pip ...
 python -m pip install --upgrade pip --quiet
 echo.
 
-:: NVIDIA GPU pruefen
-echo  [INFO] Pruefe GPU ...
+:: Abhaengigkeiten installieren (ohne torch - wird danach separat installiert)
+echo  [INFO] Installiere Abhaengigkeiten ...
+pip install TTS numpy mss easyocr keyboard customtkinter sounddevice soundfile pydub transformers==4.39.3 deep-translator langdetect --quiet
+
+if errorlevel 1 (
+    echo  [FEHLER] Abhaengigkeiten konnten nicht vollstaendig installiert werden.
+    pause
+    exit /b 1
+)
+echo  [OK] Abhaengigkeiten installiert.
+echo.
+
+:: NVIDIA GPU pruefen und passende torch-Version installieren
+:: Wichtig: torch wird NACH allen anderen Paketen installiert, damit es nicht
+:: durch TTS-Abhaengigkeiten mit einer CPU-Version ueberschrieben wird.
+echo  [INFO] Pruefe GPU und installiere PyTorch ...
 nvidia-smi >nul 2>&1
 if errorlevel 1 (
     if exist "%ProgramFiles%\NVIDIA Corporation\NVSMI\nvidia-smi.exe" (
@@ -60,11 +74,11 @@ if errorlevel 1 (
     echo  [INFO] Installiere CPU-Version von PyTorch.
     echo  [INFO] Die App funktioniert, ist aber langsamer.
     echo.
-    pip install torch==2.5.0 torchaudio==2.5.0 --index-url https://download.pytorch.org/whl/cpu --quiet
+    pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu --quiet
 ) else (
     echo  [OK] NVIDIA GPU gefunden - installiere CUDA-Version.
     echo.
-    pip install torch==2.5.0 torchaudio==2.5.0 --index-url https://download.pytorch.org/whl/cu121 --quiet
+    pip install torch torchaudio --index-url https://download.pytorch.org/whl/cu128 --quiet
 )
 
 if errorlevel 1 (
@@ -73,18 +87,6 @@ if errorlevel 1 (
     exit /b 1
 )
 echo  [OK] PyTorch installiert.
-echo.
-
-:: Uebrige Abhaengigkeiten installieren
-echo  [INFO] Installiere weitere Abhaengigkeiten ...
-pip install TTS numpy mss easyocr keyboard customtkinter sounddevice soundfile pydub transformers==4.39.3 deep-translator langdetect --quiet
-
-if errorlevel 1 (
-    echo  [FEHLER] Abhaengigkeiten konnten nicht vollstaendig installiert werden.
-    pause
-    exit /b 1
-)
-echo  [OK] Alle Abhaengigkeiten installiert.
 echo.
 
 echo  ================================================
