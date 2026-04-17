@@ -1432,7 +1432,7 @@ class OmniVoxCasterApp(ctk.CTk):
 
             print("[INFO] Lade TTS-Modell (XTTSv2) ...")
             os.environ["COQUI_TOS_AGREED"] = "1"
-            self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(device)
+            self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2", gpu=(device == "cuda"))
             print("[INFO] TTS geladen.")
 
             print("[INFO] Lade OCR-Modell (EasyOCR) ...")
@@ -1586,9 +1586,9 @@ class OmniVoxCasterApp(ctk.CTk):
                 try:
                     pre_buffer = []
                     pre_samples = 0
-                    # Puffer, um Verzögerungen bei der Generierung (besonders auf CPU) auszugleichen.
-                    # 5.0 Sekunden sollten ausreichen, um ein flüssiges Ergebnis zu gewährleisten.
-                    target_samples = int(24000 * 5.0)
+                    # Puffer-Zeit für die Audiogenerierung.
+                    # 3.0 Sekunden, um die Verzögerung vor dem Sprechen kurz zu halten.
+                    target_samples = int(24000 * 3.0)
 
                     while pre_samples < target_samples and not self._stop_playback:
                         try:
