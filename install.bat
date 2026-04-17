@@ -9,32 +9,23 @@ echo   Installation
 echo  ================================================
 echo.
 
+set PYTMP=%TEMP%\omv_pycheck.txt
+
 :: --------------------------------------------------------
 :: Python 3.10 oder 3.11 suchen
-:: Wichtig: py -3.x --version gibt auch bei fehlendem Python
-:: errorlevel 0 zurueck - daher Ausgabe pruefen!
+:: Ausgabe in Temp-Datei, um Pipe/Sonderzeichen-Probleme zu vermeiden
 :: --------------------------------------------------------
 set PYTHON_EXE=
 set PYVER=
 
-:: Python Launcher: Ausgabe auf "Python 3.11" pruefen
-for /f "tokens=*" %%v in ('py -3.11 --version 2^>^&1') do set PY311_OUT=%%v
-echo %PY311_OUT% | findstr /C:"Python 3.11" >nul 2>&1
-if not errorlevel 1 (
-    set PYTHON_EXE=py -3.11
-    set PYVER=3.11
-    goto :python_ok
-)
+py -3.11 --version > "%PYTMP%" 2>&1
+findstr /C:"Python 3.11" "%PYTMP%" >nul 2>&1
+if not errorlevel 1 ( set PYTHON_EXE=py -3.11 & set PYVER=3.11 & goto :python_ok )
 
-for /f "tokens=*" %%v in ('py -3.10 --version 2^>^&1') do set PY310_OUT=%%v
-echo %PY310_OUT% | findstr /C:"Python 3.10" >nul 2>&1
-if not errorlevel 1 (
-    set PYTHON_EXE=py -3.10
-    set PYVER=3.10
-    goto :python_ok
-)
+py -3.10 --version > "%PYTMP%" 2>&1
+findstr /C:"Python 3.10" "%PYTMP%" >nul 2>&1
+if not errorlevel 1 ( set PYTHON_EXE=py -3.10 & set PYVER=3.10 & goto :python_ok )
 
-:: Bekannte Installationspfade pruefen
 if exist "%LOCALAPPDATA%\Programs\Python\Python311\python.exe" (
     set PYTHON_EXE=%LOCALAPPDATA%\Programs\Python\Python311\python.exe
     set PYVER=3.11
@@ -46,26 +37,14 @@ if exist "%LOCALAPPDATA%\Programs\Python\Python310\python.exe" (
     goto :python_ok
 )
 
-:: python im PATH pruefen und Version validieren
-python --version >nul 2>&1
-if not errorlevel 1 (
-    for /f "tokens=2 delims= " %%v in ('python --version 2^>^&1') do set PYVER_CHECK=%%v
-    for /f "tokens=1,2 delims=." %%a in ("%PYVER_CHECK%") do (
-        set PYMAJOR=%%a
-        set PYMINOR=%%b
-    )
-    if "%PYMAJOR%"=="3" if "%PYMINOR%"=="11" (
-        set PYTHON_EXE=python
-        set PYVER=%PYVER_CHECK%
-        goto :python_ok
-    )
-    if "%PYMAJOR%"=="3" if "%PYMINOR%"=="10" (
-        set PYTHON_EXE=python
-        set PYVER=%PYVER_CHECK%
-        goto :python_ok
-    )
-    echo  [WARN] Python %PYVER_CHECK% gefunden, wird nicht unterstuetzt (benoetigt 3.10 oder 3.11).
-)
+python --version > "%PYTMP%" 2>&1
+findstr /C:"Python 3.11" "%PYTMP%" >nul 2>&1
+if not errorlevel 1 ( set PYTHON_EXE=python & set PYVER=3.11 & goto :python_ok )
+findstr /C:"Python 3.10" "%PYTMP%" >nul 2>&1
+if not errorlevel 1 ( set PYTHON_EXE=python & set PYVER=3.10 & goto :python_ok )
+
+for /f "tokens=2 delims= " %%v in (%PYTMP%) do echo  [WARN] Python %%v gefunden - benoetigt wird 3.10 oder 3.11.
+del "%PYTMP%" >nul 2>&1
 
 :: --------------------------------------------------------
 :: Python 3.11 automatisch installieren
@@ -75,11 +54,12 @@ echo.
 
 :: Versuch 1: py install (neuer Windows Python Launcher)
 py install 3.11 >nul 2>&1
-for /f "tokens=*" %%v in ('py -3.11 --version 2^>^&1') do set PY311_OUT=%%v
-echo %PY311_OUT% | findstr /C:"Python 3.11" >nul 2>&1
+py -3.11 --version > "%PYTMP%" 2>&1
+findstr /C:"Python 3.11" "%PYTMP%" >nul 2>&1
 if not errorlevel 1 (
     set PYTHON_EXE=py -3.11
     set PYVER=3.11
+    del "%PYTMP%" >nul 2>&1
     echo  [OK] Python 3.11 via py installer installiert.
     goto :python_ok
 )
@@ -89,6 +69,7 @@ winget install Python.Python.3.11 --silent --accept-package-agreements --accept-
 if exist "%LOCALAPPDATA%\Programs\Python\Python311\python.exe" (
     set PYTHON_EXE=%LOCALAPPDATA%\Programs\Python\Python311\python.exe
     set PYVER=3.11
+    del "%PYTMP%" >nul 2>&1
     echo  [OK] Python 3.11 via winget installiert.
     goto :python_ok
 )
@@ -96,9 +77,7 @@ if exist "%LOCALAPPDATA%\Programs\Python\Python311\python.exe" (
 :: Versuch 3: Download per PowerShell
 echo  [INFO] Lade Python 3.11 Installer herunter ...
 powershell -Command "Invoke-WebRequest -Uri 'https://www.python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe' -OutFile '%TEMP%\python311_setup.exe'" >nul 2>&1
-if errorlevel 1 (
-    goto :python_failed
-)
+if errorlevel 1 goto :python_failed
 
 echo  [INFO] Installiere Python 3.11 ...
 "%TEMP%\python311_setup.exe" /quiet InstallAllUsers=0 PrependPath=1 Include_test=0
@@ -107,11 +86,13 @@ del "%TEMP%\python311_setup.exe" >nul 2>&1
 if exist "%LOCALAPPDATA%\Programs\Python\Python311\python.exe" (
     set PYTHON_EXE=%LOCALAPPDATA%\Programs\Python\Python311\python.exe
     set PYVER=3.11
+    del "%PYTMP%" >nul 2>&1
     echo  [OK] Python 3.11 installiert.
     goto :python_ok
 )
 
 :python_failed
+del "%PYTMP%" >nul 2>&1
 echo  [FEHLER] Python 3.11 konnte nicht automatisch installiert werden.
 echo.
 echo  Bitte manuell installieren und danach install.bat erneut ausfuehren:
@@ -121,6 +102,7 @@ pause
 exit /b 1
 
 :python_ok
+del "%PYTMP%" >nul 2>&1
 echo  [OK] Python %PYVER% gefunden.
 echo.
 
