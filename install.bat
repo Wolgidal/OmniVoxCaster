@@ -135,9 +135,18 @@ echo.
 :: Abhaengigkeiten installieren (torch kommt danach separat)
 :: --------------------------------------------------------
 
-:: Build-Umgebung vorbereiten (Cython + kompatible setuptools fuer TTS)
+:: Build-Umgebung vorbereiten
 echo  [INFO] Bereite Build-Umgebung vor ...
-venv\Scripts\pip.exe install "setuptools>=40,<70" wheel Cython --quiet
+venv\Scripts\pip.exe install wheel Cython
+
+:: Cython pruefen
+venv\Scripts\python.exe -c "import Cython" >nul 2>&1
+if errorlevel 1 (
+    echo  [FEHLER] Cython konnte nicht installiert werden.
+    pause
+    exit /b 1
+)
+echo  [OK] Build-Umgebung bereit.
 echo.
 
 echo  [INFO] Installiere Abhaengigkeiten ...
@@ -148,21 +157,19 @@ if errorlevel 1 (
     pause
     exit /b 1
 )
+echo  [OK] Abhaengigkeiten installiert.
+echo.
 
 echo  [INFO] Installiere TTS (Coqui XTTSv2) ...
-venv\Scripts\pip.exe install TTS==0.22.0
+set PYTHONPATH=%~dp0venv\Lib\site-packages
+venv\Scripts\pip.exe install TTS==0.22.0 --no-build-isolation
+set PYTHONPATH=
 if errorlevel 1 (
-    echo  [WARN] Erster Versuch fehlgeschlagen - versuche alternativen Build ...
-    venv\Scripts\pip.exe install TTS==0.22.0 --no-build-isolation
-    if errorlevel 1 (
-        echo  [FEHLER] TTS konnte nicht installiert werden.
-        echo  Bitte Visual C++ Build Tools installieren:
-        echo  https://visualstudio.microsoft.com/visual-cpp-build-tools/
-        pause
-        exit /b 1
-    )
+    echo  [FEHLER] TTS konnte nicht installiert werden.
+    pause
+    exit /b 1
 )
-echo  [OK] Abhaengigkeiten installiert.
+echo  [OK] TTS installiert.
 echo.
 
 :: --------------------------------------------------------
