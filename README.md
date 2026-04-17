@@ -14,7 +14,6 @@ An AI-powered screen reader that reads any text area on your screen aloud — us
 - **Translation** — Optionally translate recognized text to German or English before reading (via Google Translate).
 - **Multiple Voices** — Store and manage several voice profiles, switchable at any time.
 - **Adjustable Speed** — Speaking rate from 0.5× to 2.0×.
-- **Warhammer 40K UI** — Dark Gothic design with brass accents.
 
 ---
 
