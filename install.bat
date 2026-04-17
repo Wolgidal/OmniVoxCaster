@@ -124,10 +124,11 @@ if exist "venv\Scripts\python.exe" (
 echo.
 
 :: --------------------------------------------------------
-:: pip aktualisieren
+:: pip aktualisieren (auf Version die mit TTS kompatibel ist)
+:: pip 24+ hat striktere Metadaten-Validierung die TTS 0.22.0 nicht besteht
 :: --------------------------------------------------------
 echo  [INFO] Aktualisiere pip ...
-venv\Scripts\python.exe -m pip install --upgrade pip --quiet
+venv\Scripts\python.exe -m pip install "pip>=23,<24" --quiet
 echo.
 
 :: --------------------------------------------------------
