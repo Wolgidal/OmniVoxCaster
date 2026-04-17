@@ -1,8 +1,6 @@
-torch==2.5.0
-torchaudio==2.5.0
-torchvision==0.20.0
 TTS
-numpy
+numpy==1.26.4
+pandas==1.5.3
 mss
 easyocr
 keyboard

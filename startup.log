@@ -1,0 +1,16 @@
+ [17/04/2026 21:22:38.67] Starte OmniVox Caster ... 
+ Projektpfad: C:\Projekte\OmniVoxCaster 
+=======================================================
+  OmniVox Caster — Voxcaster Imperialis
+  GUI wird gestartet ...
+=======================================================
+[INFO] torch: 2.5.0+cu124, Build-CUDA: 12.4, Geraet: NVIDIA GeForce RTX 4090
+[INFO] Lade TTS-Modell (XTTSv2) ...
+ > tts_models/multilingual/multi-dataset/xtts_v2 is already downloaded.
+ > Using model: xtts
+[INFO] TTS geladen.
+[INFO] Lade OCR-Modell (EasyOCR) ...
+[INFO] OCR geladen.
+
+[BEREIT] Drücke AKTIVIEREN und dann [ALT+Q] zum Auswählen.
+

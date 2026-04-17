@@ -150,7 +150,7 @@ echo  [OK] Build-Umgebung bereit.
 echo.
 
 echo  [INFO] Installiere Abhaengigkeiten ...
-venv\Scripts\pip.exe install numpy mss easyocr keyboard customtkinter sounddevice soundfile pydub transformers==4.39.3 deep-translator langdetect --quiet
+venv\Scripts\pip.exe install numpy==1.26.4 pandas==1.5.3 mss easyocr keyboard customtkinter sounddevice soundfile pydub transformers==4.39.3 deep-translator langdetect --quiet
 
 if errorlevel 1 (
     echo  [FEHLER] Abhaengigkeiten konnten nicht vollstaendig installiert werden.
@@ -172,28 +172,37 @@ if errorlevel 1 (
 echo  [OK] TTS installiert.
 echo.
 
+echo  [INFO] Fixiere kompatible NumPy/Pandas-Versionen ...
+venv\Scripts\pip.exe install --upgrade --force-reinstall numpy==1.26.4 pandas==1.5.3 --quiet
+if errorlevel 1 (
+    echo  [FEHLER] NumPy/Pandas konnten nicht auf kompatible Versionen gesetzt werden.
+    pause
+    exit /b 1
+)
+echo  [OK] NumPy/Pandas kompatibel eingerichtet.
+echo.
+
 :: --------------------------------------------------------
 :: PyTorch installieren - NACH allen anderen Paketen, damit
 :: TTS die CUDA-Version nicht mit CPU ueberschreiben kann
 :: --------------------------------------------------------
 echo  [INFO] Pruefe GPU und installiere PyTorch ...
-nvidia-smi >nul 2>&1
-if errorlevel 1 (
-    if exist "%ProgramFiles%\NVIDIA Corporation\NVSMI\nvidia-smi.exe" (
-        "%ProgramFiles%\NVIDIA Corporation\NVSMI\nvidia-smi.exe" >nul 2>&1
-    )
-)
+set GPU_BACKEND=cpu
 
-if errorlevel 1 (
+call :detect_nvidia_gpu
+
+if /I "%GPU_BACKEND%"=="cuda" (
+    echo  [OK] NVIDIA GPU gefunden - installiere CUDA-Version.
+    echo.
+    venv\Scripts\pip.exe uninstall -y torch torchaudio torchvision >nul 2>&1
+    venv\Scripts\pip.exe install --upgrade --force-reinstall torch torchaudio torchvision --index-url https://download.pytorch.org/whl/cu128 --quiet
+) else (
     echo  [INFO] Keine NVIDIA GPU gefunden.
     echo  [INFO] Installiere CPU-Version von PyTorch.
     echo  [INFO] Die App funktioniert, ist aber langsamer.
     echo.
-    venv\Scripts\pip.exe install torch torchaudio --index-url https://download.pytorch.org/whl/cpu --quiet
-) else (
-    echo  [OK] NVIDIA GPU gefunden - installiere CUDA-Version.
-    echo.
-    venv\Scripts\pip.exe install torch torchaudio --index-url https://download.pytorch.org/whl/cu128 --quiet
+    venv\Scripts\pip.exe uninstall -y torch torchaudio torchvision >nul 2>&1
+    venv\Scripts\pip.exe install --upgrade --force-reinstall torch torchaudio torchvision --index-url https://download.pytorch.org/whl/cpu --quiet
 )
 
 if errorlevel 1 (
@@ -202,6 +211,7 @@ if errorlevel 1 (
     exit /b 1
 )
 echo  [OK] PyTorch installiert.
+venv\Scripts\python.exe -c "import torch; print('[INFO] Torch-Version:', torch.__version__); print('[INFO] Torch-CUDA-Build:', torch.version.cuda or 'cpu-only'); print('[INFO] CUDA verfuegbar:', torch.cuda.is_available())"
 echo.
 
 echo  ================================================
@@ -214,3 +224,25 @@ echo   heruntergeladen (~2 GB). Nur einmalig.
 echo  ================================================
 echo.
 pause
+goto :eof
+
+:detect_nvidia_gpu
+nvidia-smi >nul 2>&1
+if not errorlevel 1 (
+    set GPU_BACKEND=cuda
+    goto :eof
+)
+
+if exist "%ProgramFiles%\NVIDIA Corporation\NVSMI\nvidia-smi.exe" (
+    "%ProgramFiles%\NVIDIA Corporation\NVSMI\nvidia-smi.exe" >nul 2>&1
+    if not errorlevel 1 (
+        set GPU_BACKEND=cuda
+        goto :eof
+    )
+)
+
+powershell -NoProfile -ExecutionPolicy Bypass -Command "$gpus = Get-CimInstance Win32_VideoController | Where-Object { $_.Name -match 'NVIDIA' }; if ($gpus) { exit 0 } else { exit 1 }" >nul 2>&1
+if not errorlevel 1 (
+    set GPU_BACKEND=cuda
+)
+goto :eof

@@ -53,6 +53,40 @@ os.makedirs(APPDATA_DIR, exist_ok=True)
 SAMPLE_RATE = 22050
 VERSION     = "0.5"
 
+
+def _get_torch_runtime_info():
+    cuda_build = getattr(torch.version, "cuda", None)
+    cuda_available = False
+    cuda_error = None
+
+    try:
+        cuda_available = torch.cuda.is_available()
+    except Exception as exc:
+        cuda_error = exc
+
+    if not cuda_available:
+        try:
+            torch.cuda.init()
+            cuda_available = torch.cuda.is_available()
+        except Exception as exc:
+            cuda_error = exc
+
+    device = "cuda" if cuda_available else "cpu"
+    hw_name = "CPU"
+    if cuda_available:
+        try:
+            hw_name = torch.cuda.get_device_name(0)
+        except Exception:
+            hw_name = "CUDA GPU"
+
+    return {
+        "device": device,
+        "hw_name": hw_name,
+        "cuda_build": cuda_build,
+        "cuda_available": cuda_available,
+        "cuda_error": cuda_error,
+    }
+
 COLORS = {
     "bg":       "#09070a",
     "surface":  "#120e0f",
@@ -1426,16 +1460,16 @@ class OmniVoxCasterApp(ctk.CTk):
     # ----------------------------------------------------------
     def _load_models(self):
         try:
-            if not torch.cuda.is_available():
-                try:
-                    torch.cuda.init()
-                    print(f"[WARN] CUDA nach init(): {torch.cuda.is_available()}")
-                except Exception as cuda_err:
-                    print(f"[WARN] CUDA nicht verfügbar: {cuda_err}")
-            device = "cuda" if torch.cuda.is_available() else "cpu"
-            hw_name = torch.cuda.get_device_name(0) if device == "cuda" else "CPU"
-            print(f"[INFO] torch: {torch.__version__}, Gerät: {hw_name}")
-
+            runtime = _get_torch_runtime_info()
+            device = runtime["device"]
+            hw_name = runtime["hw_name"]
+            cuda_build = runtime["cuda_build"] or "cpu-only"
+            print(f"[INFO] torch: {torch.__version__}, Build-CUDA: {cuda_build}, Geraet: {hw_name}")
+            if device != "cuda":
+                if runtime["cuda_build"] is None:
+                    print("[WARN] CPU-only PyTorch erkannt. Fuer lokale NVIDIA-Systeme install.bat erneut ausfuehren, damit die CUDA-Version installiert wird.")
+                elif runtime["cuda_error"] is not None:
+                    print(f"[WARN] CUDA-Build vorhanden, GPU aber nicht nutzbar: {runtime['cuda_error']}")
             print("[INFO] Lade TTS-Modell (XTTSv2) ...")
             os.environ["COQUI_TOS_AGREED"] = "1"
             self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2", gpu=(device == "cuda"))
