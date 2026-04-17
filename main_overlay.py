@@ -19,8 +19,16 @@ def _patched_torch_load(f, *args, **kwargs):
     return _orig_torch_load(f, *args, **kwargs)
 torch.load = _patched_torch_load
 
+# torchaudio 2.5+ uses torchcodec by default which is not installed.
+# Replace torchaudio.load with a soundfile-based version that has the same interface.
 try:
-    torchaudio.set_audio_backend("soundfile")
+    import soundfile as _sf
+
+    def _torchaudio_load_sf(path, *_):
+        data, sr = _sf.read(str(path), dtype="float32", always_2d=True)
+        return torch.from_numpy(data.T), sr  # (channels, samples), sample_rate
+
+    torchaudio.load = _torchaudio_load_sf
 except Exception:
     pass
 
