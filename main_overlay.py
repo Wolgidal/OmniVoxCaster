@@ -87,6 +87,31 @@ def _get_torch_runtime_info():
         "cuda_error": cuda_error,
     }
 
+
+def _downscale_for_ocr(img, max_dim=1600):
+    height, width = img.shape[:2]
+    largest_dim = max(height, width)
+    if largest_dim <= max_dim:
+        return img
+
+    step = max(1, int(np.ceil(largest_dim / max_dim)))
+    return img[::step, ::step]
+
+
+def _ocr_max_dim_for_box(box):
+    width = int(box.get("width", 0))
+    height = int(box.get("height", 0))
+    area = max(0, width * height)
+    largest_dim = max(width, height)
+
+    if area >= 3_000_000 or largest_dim >= 2400:
+        return 1400
+    if area >= 1_500_000 or largest_dim >= 1800:
+        return 1600
+    if area >= 800_000 or largest_dim >= 1400:
+        return 1800
+    return 2200
+
 COLORS = {
     "bg":       "#09070a",
     "surface":  "#120e0f",
@@ -847,6 +872,7 @@ class OmniVoxCasterApp(ctk.CTk):
         self._is_repeating     = False
         self.cmd_queue         = queue.Queue()
         self.runtime_info      = None
+        self.translators       = {}
 
         self._setup_window()
         self._build_ui()
@@ -1607,6 +1633,26 @@ class OmniVoxCasterApp(ctk.CTk):
             print(f"[FEHLER] Stimmvorlage konnte nicht vorbereitet werden: {exc}")
             self._set_status("Fehler beim Vorbereiten!", COLORS["red"])
 
+    def _queue_audio_chunk(self, audio_queue, chunk):
+        while not self._stop_playback:
+            try:
+                audio_queue.put(chunk, timeout=0.1)
+                return True
+            except queue.Full:
+                continue
+        return False
+
+    def _get_translator(self, source_lang, target_lang):
+        key = (source_lang, target_lang)
+        translator = self.translators.get(key)
+        if translator is not None:
+            return translator
+
+        from deep_translator import GoogleTranslator
+        translator = GoogleTranslator(source=source_lang, target=target_lang)
+        self.translators[key] = translator
+        return translator
+
     # ----------------------------------------------------------
     #  OCR + TTS
     # ----------------------------------------------------------
@@ -1628,8 +1674,7 @@ class OmniVoxCasterApp(ctk.CTk):
             if self.target_lang in ["de", "en"] and detected_lang != self.target_lang:
                 self._set_status(t("status_translating"), COLORS["yellow"])
                 try:
-                    from deep_translator import GoogleTranslator
-                    translator = GoogleTranslator(source=detected_lang, target=self.target_lang)
+                    translator = self._get_translator(detected_lang, self.target_lang)
                     translated_text = translator.translate(text)
                     print(f"\n--- ÜBERSETZT ({self.target_lang.upper()}) ---\n{translated_text}\n----------------------")
                     text = translated_text
@@ -1650,8 +1695,10 @@ class OmniVoxCasterApp(ctk.CTk):
 
             t0 = time.time()
             text_chunks = self._split_text("... " + text)
+            device = (self.runtime_info or {}).get("device", "cpu")
+            prebuffer_seconds = 1.2 if device == "cuda" else 2.4
 
-            audio_queue = queue.Queue()
+            audio_queue = queue.Queue(maxsize=24)
             playback_finished = threading.Event()
             collected_audio = []
 
@@ -1661,7 +1708,7 @@ class OmniVoxCasterApp(ctk.CTk):
                     pre_samples = 0
                     # Puffer-Zeit für die Audiogenerierung.
                     # 3.0 Sekunden, um die Verzögerung vor dem Sprechen kurz zu halten.
-                    target_samples = int(24000 * 3.0)
+                    target_samples = int(24000 * prebuffer_seconds)
 
                     while pre_samples < target_samples and not self._stop_playback:
                         try:
@@ -1720,10 +1767,11 @@ class OmniVoxCasterApp(ctk.CTk):
                         if self._stop_playback:
                             break
                         np_chunk = chunk.squeeze().cpu().numpy()
-                        audio_queue.put(np_chunk)
+                        if not self._queue_audio_chunk(audio_queue, np_chunk):
+                            break
                         collected_audio.append(np_chunk)
             finally:
-                audio_queue.put(None)
+                self._queue_audio_chunk(audio_queue, None)
                 playback_finished.wait()
 
             if collected_audio and not self._stop_playback:
@@ -1750,6 +1798,7 @@ class OmniVoxCasterApp(ctk.CTk):
     def _run_ocr(self, box):
         with mss.mss() as sct:
             img = np.array(sct.grab(box))[:, :, :3]
+        img = _downscale_for_ocr(img, max_dim=_ocr_max_dim_for_box(box))
         results = self.ocr_reader.readtext(img, detail=0, paragraph=True)
         return " ".join(results) if results else None
 
