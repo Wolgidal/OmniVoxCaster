@@ -1,0 +1,79 @@
+OmniVox Caster — Voxcaster Imperialis
+Copyright (c) 2025 Andreas Wolgensinger
+
+This product includes software and models developed by third parties.
+The following components are used under their respective licenses:
+
+================================================================================
+Coqui TTS / XTTSv2
+https://github.com/coqui-ai/TTS
+License: Coqui Public Model License (CPML)
+         https://coqui.ai/cpml
+Note:    Non-commercial use only. Commercial use requires a separate license.
+================================================================================
+
+================================================================================
+EasyOCR
+https://github.com/JaidedAI/EasyOCR
+License: Apache License, Version 2.0
+         http://www.apache.org/licenses/LICENSE-2.0
+================================================================================
+
+================================================================================
+deep-translator
+https://github.com/nidhaloff/deep-translator
+License: MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+================================================================================
+
+================================================================================
+CustomTkinter
+https://github.com/TomSchimansky/CustomTkinter
+License: MIT License
+================================================================================
+
+================================================================================
+PyTorch
+https://pytorch.org
+License: BSD 3-Clause License
+         https://github.com/pytorch/pytorch/blob/main/LICENSE
+================================================================================
+
+================================================================================
+sounddevice
+https://github.com/spatialaudio/python-sounddevice
+License: MIT License
+================================================================================
+
+================================================================================
+SoundFile (python-soundfile)
+https://github.com/bastibe/python-soundfile
+License: BSD 3-Clause License
+================================================================================
+
+================================================================================
+python-mss
+https://github.com/BoboTiG/python-mss
+License: MIT License
+================================================================================
+
+================================================================================
+keyboard
+https://github.com/boppreh/keyboard
+License: MIT License
+================================================================================
+
+================================================================================
+NumPy
+https://numpy.org
+License: BSD 3-Clause License
+         https://github.com/numpy/numpy/blob/main/LICENSE.txt
+================================================================================

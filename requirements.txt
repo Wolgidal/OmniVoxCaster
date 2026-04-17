@@ -1,0 +1,13 @@
+torch==2.5.0
+torchaudio==2.5.0
+torchvision==0.20.0
+TTS
+numpy
+mss
+easyocr
+keyboard
+customtkinter
+sounddevice
+soundfile
+pydub
+transformers==4.39.3

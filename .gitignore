@@ -1,0 +1,13 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Nutzerdaten — niemals ins Repo
+voices/
+*.wav
+*.mp3
+config.ini
+
+# Temporäre Dateien
+temp_rec.wav
