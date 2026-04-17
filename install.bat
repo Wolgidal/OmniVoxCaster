@@ -133,13 +133,33 @@ echo.
 :: --------------------------------------------------------
 :: Abhaengigkeiten installieren (torch kommt danach separat)
 :: --------------------------------------------------------
+
+:: Setuptools auf kompatible Version bringen (neuere Versionen brechen TTS-Build)
+echo  [INFO] Bereite Build-Umgebung vor ...
+venv\Scripts\pip.exe install "setuptools>=40,<70" wheel --quiet
+echo.
+
 echo  [INFO] Installiere Abhaengigkeiten ...
-venv\Scripts\pip.exe install TTS numpy mss easyocr keyboard customtkinter sounddevice soundfile pydub transformers==4.39.3 deep-translator langdetect --quiet
+venv\Scripts\pip.exe install numpy mss easyocr keyboard customtkinter sounddevice soundfile pydub transformers==4.39.3 deep-translator langdetect --quiet
 
 if errorlevel 1 (
     echo  [FEHLER] Abhaengigkeiten konnten nicht vollstaendig installiert werden.
     pause
     exit /b 1
+)
+
+echo  [INFO] Installiere TTS (Coqui XTTSv2) ...
+venv\Scripts\pip.exe install TTS==0.22.0
+if errorlevel 1 (
+    echo  [WARN] Erster Versuch fehlgeschlagen - versuche alternativen Build ...
+    venv\Scripts\pip.exe install TTS==0.22.0 --no-build-isolation
+    if errorlevel 1 (
+        echo  [FEHLER] TTS konnte nicht installiert werden.
+        echo  Bitte Visual C++ Build Tools installieren:
+        echo  https://visualstudio.microsoft.com/visual-cpp-build-tools/
+        pause
+        exit /b 1
+    )
 )
 echo  [OK] Abhaengigkeiten installiert.
 echo.
