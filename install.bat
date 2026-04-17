@@ -1,19 +1,19 @@
 @echo off
-chcp 65001 >nul
-title OmniVox Caster — Installation
+title OmniVox Caster - Installation
 
 echo.
-echo  ╔══════════════════════════════════════════════════╗
-echo  ║   OmniVox Caster — Voxcaster Imperialis          ║
-echo  ║   Installation                                    ║
-echo  ╚══════════════════════════════════════════════════╝
+echo  ================================================
+echo   OmniVox Caster - Voxcaster Imperialis
+echo   Installation
+echo  ================================================
 echo.
 
-:: Python prüfen
+:: Python pruefen
 python --version >nul 2>&1
 if errorlevel 1 (
     echo  [FEHLER] Python wurde nicht gefunden.
-    echo  Bitte installiere Python 3.10 oder neuer von https://www.python.org
+    echo  Bitte installiere Python 3.10 oder neuer:
+    echo  https://www.python.org/downloads/
     echo  Wichtig: Haken bei "Add Python to PATH" setzen!
     pause
     exit /b 1
@@ -44,17 +44,19 @@ call "venv\Scripts\activate.bat"
 :: pip aktualisieren
 echo  [INFO] Aktualisiere pip ...
 python -m pip install --upgrade pip --quiet
+echo.
 
-:: NVIDIA GPU prüfen
-echo  [INFO] Prüfe GPU ...
+:: NVIDIA GPU pruefen
+echo  [INFO] Pruefe GPU ...
 nvidia-smi >nul 2>&1
 if errorlevel 1 (
-    echo  [INFO] Keine NVIDIA GPU gefunden — installiere CPU-Version von PyTorch.
-    echo         ^(Die App läuft langsamer, funktioniert aber vollständig.^)
+    echo  [INFO] Keine NVIDIA GPU gefunden.
+    echo  [INFO] Installiere CPU-Version von PyTorch.
+    echo  [INFO] Die App funktioniert, ist aber langsamer.
     echo.
     pip install torch==2.5.0 torchaudio==2.5.0 --index-url https://download.pytorch.org/whl/cpu --quiet
 ) else (
-    echo  [OK] NVIDIA GPU gefunden — installiere CUDA-Version von PyTorch.
+    echo  [OK] NVIDIA GPU gefunden - installiere CUDA-Version.
     echo.
     pip install torch==2.5.0 torchaudio==2.5.0 --index-url https://download.pytorch.org/whl/cu121 --quiet
 )
@@ -67,24 +69,25 @@ if errorlevel 1 (
 echo  [OK] PyTorch installiert.
 echo.
 
-:: Übrige Abhängigkeiten installieren
-echo  [INFO] Installiere weitere Abhängigkeiten ...
+:: Uebrige Abhaengigkeiten installieren
+echo  [INFO] Installiere weitere Abhaengigkeiten ...
 pip install TTS numpy mss easyocr keyboard customtkinter sounddevice soundfile pydub transformers==4.39.3 deep-translator langdetect --quiet
 
 if errorlevel 1 (
-    echo  [FEHLER] Abhängigkeiten konnten nicht vollständig installiert werden.
+    echo  [FEHLER] Abhaengigkeiten konnten nicht vollstaendig installiert werden.
     pause
     exit /b 1
 )
-echo  [OK] Alle Abhängigkeiten installiert.
+echo  [OK] Alle Abhaengigkeiten installiert.
 echo.
 
-echo  ╔══════════════════════════════════════════════════╗
-echo  ║   Installation abgeschlossen!                    ║
-echo  ║                                                   ║
-echo  ║   Starte die App mit: start.bat                  ║
-echo  ║   Beim ersten Start werden KI-Modelle            ║
-echo  ║   heruntergeladen (~2 GB). Einmalig.             ║
-echo  ╚══════════════════════════════════════════════════╝
+echo  ================================================
+echo   Installation abgeschlossen!
+echo.
+echo   Starte die App mit: start.bat
+echo.
+echo   Beim ersten Start werden KI-Modelle
+echo   heruntergeladen (~2 GB). Nur einmalig.
+echo  ================================================
 echo.
 pause
