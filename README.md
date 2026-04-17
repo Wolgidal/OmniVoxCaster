@@ -1,4 +1,4 @@
-# OmniVox Caster — Voxcaster Imperialis
+# OmniVox Caster — Voxcaster Imperialis  `v0.5`
 
 An AI-powered screen reader that reads any text area on your screen aloud — using your own cloned voice.
 

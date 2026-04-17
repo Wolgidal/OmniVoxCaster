@@ -37,6 +37,8 @@ APP_DIR     = os.path.dirname(os.path.abspath(__file__))
 APPDATA_DIR = os.path.join(os.environ.get("APPDATA", APP_DIR), "OmniVoxCaster")
 os.makedirs(APPDATA_DIR, exist_ok=True)
 SAMPLE_RATE = 22050
+VERSION     = "0.5"
+COPYRIGHT   = "© 2025 Andreas Wolgensinger"
 
 COLORS = {
     "bg":       "#09070a",
@@ -820,7 +822,7 @@ class OmniVoxCasterApp(ctk.CTk):
     #  FENSTER & UI
     # ----------------------------------------------------------
     def _setup_window(self):
-        self.title("OmniVox Caster")
+        self.title(f"OmniVox Caster  v{VERSION}")
         self.geometry("400x740")
         self.resizable(False, False)
         self.configure(fg_color=COLORS["bg"])
@@ -889,12 +891,22 @@ class OmniVoxCasterApp(ctk.CTk):
             command=self._open_help,
         ).pack(side="right")
 
+        sub_row = ctk.CTkFrame(hdr_inner, fg_color="transparent")
+        sub_row.pack(fill="x", pady=(1, 0))
+
         ctk.CTkLabel(
-            hdr_inner,
+            sub_row,
             text="V O X C A S T E R   I M P E R I A L I S",
             font=("Palatino Linotype", 11),
             text_color=COLORS["text_dim"],
-        ).pack(anchor="w", pady=(1, 0))
+        ).pack(side="left")
+
+        ctk.CTkLabel(
+            sub_row,
+            text=f"v{VERSION}  —  {COPYRIGHT}",
+            font=("Palatino Linotype", 9),
+            text_color=COLORS["text_dim"],
+        ).pack(side="right")
 
         ctk.CTkFrame(header, fg_color=COLORS["ornament"], height=1, corner_radius=0).pack(fill="x")
         ctk.CTkFrame(header, fg_color=COLORS["bg"], height=2, corner_radius=0).pack(fill="x")
