@@ -2,6 +2,9 @@
 
 An AI-powered screen reader that reads any text area on your screen aloud — using your own cloned voice.
 
+Tired of squinting at endless walls of text in your favorite games? Stop reading and start listening. 
+OmniVox Caster turns every dialogue into a cinematic audio experience, powered by the raw strength of your RTX GPU.
+
 > **Language / Sprache:** The app supports German and English. Switch via the DE/EN button in the header.  
 > **Sprache:** Die App unterstützt Deutsch und Englisch. Umschalten über den DE/EN-Knopf im Header.
 
