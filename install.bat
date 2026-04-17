@@ -1,5 +1,6 @@
 @echo off
 title OmniVox Caster - Installation
+cd /d "%~dp0"
 
 echo.
 echo  ================================================
@@ -8,55 +9,113 @@ echo   Installation
 echo  ================================================
 echo.
 
-:: Python pruefen
+:: --------------------------------------------------------
+:: Python 3.10 oder 3.11 suchen
+:: --------------------------------------------------------
+set PYTHON_EXE=
+set PYVER=
+
+:: Python Launcher pruefen (py -3.11 / py -3.10)
+py -3.11 --version >nul 2>&1
+if not errorlevel 1 (
+    set PYTHON_EXE=py -3.11
+    set PYVER=3.11
+    goto :python_ok
+)
+py -3.10 --version >nul 2>&1
+if not errorlevel 1 (
+    set PYTHON_EXE=py -3.10
+    set PYVER=3.10
+    goto :python_ok
+)
+
+:: Bekannte Installationspfade pruefen
+if exist "%LOCALAPPDATA%\Programs\Python\Python311\python.exe" (
+    set PYTHON_EXE=%LOCALAPPDATA%\Programs\Python\Python311\python.exe
+    set PYVER=3.11
+    goto :python_ok
+)
+if exist "%LOCALAPPDATA%\Programs\Python\Python310\python.exe" (
+    set PYTHON_EXE=%LOCALAPPDATA%\Programs\Python\Python310\python.exe
+    set PYVER=3.10
+    goto :python_ok
+)
+
+:: python im PATH pruefen und Version validieren
 python --version >nul 2>&1
+if not errorlevel 1 (
+    for /f "tokens=2 delims= " %%v in ('python --version 2^>^&1') do set PYVER_CHECK=%%v
+    for /f "tokens=1,2 delims=." %%a in ("%PYVER_CHECK%") do (
+        set PYMAJOR=%%a
+        set PYMINOR=%%b
+    )
+    if "%PYMAJOR%"=="3" if "%PYMINOR%"=="11" (
+        set PYTHON_EXE=python
+        set PYVER=%PYVER_CHECK%
+        goto :python_ok
+    )
+    if "%PYMAJOR%"=="3" if "%PYMINOR%"=="10" (
+        set PYTHON_EXE=python
+        set PYVER=%PYVER_CHECK%
+        goto :python_ok
+    )
+    echo  [WARN] Python %PYVER_CHECK% gefunden, aber benoetigt wird 3.10 oder 3.11.
+)
+
+:: --------------------------------------------------------
+:: Python 3.11 automatisch installieren
+:: --------------------------------------------------------
+echo  [INFO] Python 3.11 wird automatisch installiert ...
+echo.
+
+:: Versuch 1: winget
+winget install Python.Python.3.11 --silent --accept-package-agreements --accept-source-agreements >nul 2>&1
+if exist "%LOCALAPPDATA%\Programs\Python\Python311\python.exe" (
+    set PYTHON_EXE=%LOCALAPPDATA%\Programs\Python\Python311\python.exe
+    set PYVER=3.11
+    echo  [OK] Python 3.11 via winget installiert.
+    goto :python_ok
+)
+
+:: Versuch 2: Download per PowerShell
+echo  [INFO] Lade Python 3.11 Installer herunter ...
+powershell -Command "Invoke-WebRequest -Uri 'https://www.python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe' -OutFile '%TEMP%\python311_setup.exe'" >nul 2>&1
 if errorlevel 1 (
-    echo  [FEHLER] Python wurde nicht gefunden.
-    echo  Bitte installiere Python 3.10 oder neuer:
-    echo  https://www.python.org/downloads/
-    echo  Wichtig: Haken bei "Add Python to PATH" setzen!
-    pause
-    exit /b 1
+    goto :python_failed
 )
 
-for /f "tokens=2 delims= " %%v in ('python --version 2^>^&1') do set PYVER=%%v
-for /f "tokens=1,2 delims=." %%a in ("%PYVER%") do (
-    set PYMAJOR=%%a
-    set PYMINOR=%%b
+echo  [INFO] Installiere Python 3.11 ...
+"%TEMP%\python311_setup.exe" /quiet InstallAllUsers=0 PrependPath=1 Include_test=0
+del "%TEMP%\python311_setup.exe" >nul 2>&1
+
+if exist "%LOCALAPPDATA%\Programs\Python\Python311\python.exe" (
+    set PYTHON_EXE=%LOCALAPPDATA%\Programs\Python\Python311\python.exe
+    set PYVER=3.11
+    echo  [OK] Python 3.11 installiert.
+    goto :python_ok
 )
 
-if %PYMAJOR% LSS 3 (
-    echo  [FEHLER] Python %PYVER% wird nicht unterstuetzt.
-    echo  Bitte installiere Python 3.10 oder 3.11.
-    pause
-    exit /b 1
-)
-if %PYMAJOR% EQU 3 if %PYMINOR% LSS 10 (
-    echo  [FEHLER] Python %PYVER% ist zu alt.
-    echo  Bitte installiere Python 3.10 oder 3.11.
-    pause
-    exit /b 1
-)
-if %PYMAJOR% EQU 3 if %PYMINOR% GTR 11 (
-    echo  [FEHLER] Python %PYVER% wird nicht unterstuetzt.
-    echo  Das KI-Modell (Coqui TTS) benoetigt Python 3.10 oder 3.11.
-    echo.
-    echo  Bitte installiere Python 3.11:
-    echo  https://www.python.org/downloads/release/python-3119/
-    echo  Wichtig: Haken bei "Add Python to PATH" setzen!
-    pause
-    exit /b 1
-)
+:python_failed
+echo  [FEHLER] Python 3.11 konnte nicht automatisch installiert werden.
+echo.
+echo  Bitte manuell installieren und danach install.bat erneut ausfuehren:
+echo  https://www.python.org/downloads/release/python-3119/
+echo  Wichtig: Haken bei "Add Python to PATH" setzen!
+pause
+exit /b 1
 
+:python_ok
 echo  [OK] Python %PYVER% gefunden.
 echo.
 
+:: --------------------------------------------------------
 :: Virtuelle Umgebung erstellen
-if exist "venv\Scripts\activate.bat" (
+:: --------------------------------------------------------
+if exist "venv\Scripts\python.exe" (
     echo  [OK] Virtuelle Umgebung bereits vorhanden.
 ) else (
     echo  [INFO] Erstelle virtuelle Umgebung ...
-    python -m venv venv
+    %PYTHON_EXE% -m venv venv
     if errorlevel 1 (
         echo  [FEHLER] Virtuelle Umgebung konnte nicht erstellt werden.
         pause
@@ -66,17 +125,18 @@ if exist "venv\Scripts\activate.bat" (
 )
 echo.
 
-:: Umgebung aktivieren
-call "venv\Scripts\activate.bat"
-
+:: --------------------------------------------------------
 :: pip aktualisieren
+:: --------------------------------------------------------
 echo  [INFO] Aktualisiere pip ...
-python -m pip install --upgrade pip --quiet
+venv\Scripts\python.exe -m pip install --upgrade pip --quiet
 echo.
 
-:: Abhaengigkeiten installieren (ohne torch - wird danach separat installiert)
+:: --------------------------------------------------------
+:: Abhaengigkeiten installieren (torch kommt danach separat)
+:: --------------------------------------------------------
 echo  [INFO] Installiere Abhaengigkeiten ...
-pip install TTS numpy mss easyocr keyboard customtkinter sounddevice soundfile pydub transformers==4.39.3 deep-translator langdetect --quiet
+venv\Scripts\pip.exe install TTS numpy mss easyocr keyboard customtkinter sounddevice soundfile pydub transformers==4.39.3 deep-translator langdetect --quiet
 
 if errorlevel 1 (
     echo  [FEHLER] Abhaengigkeiten konnten nicht vollstaendig installiert werden.
@@ -86,9 +146,10 @@ if errorlevel 1 (
 echo  [OK] Abhaengigkeiten installiert.
 echo.
 
-:: NVIDIA GPU pruefen und passende torch-Version installieren
-:: Wichtig: torch wird NACH allen anderen Paketen installiert, damit es nicht
-:: durch TTS-Abhaengigkeiten mit einer CPU-Version ueberschrieben wird.
+:: --------------------------------------------------------
+:: PyTorch installieren - NACH allen anderen Paketen, damit
+:: TTS die CUDA-Version nicht mit CPU ueberschreiben kann
+:: --------------------------------------------------------
 echo  [INFO] Pruefe GPU und installiere PyTorch ...
 nvidia-smi >nul 2>&1
 if errorlevel 1 (
@@ -102,11 +163,11 @@ if errorlevel 1 (
     echo  [INFO] Installiere CPU-Version von PyTorch.
     echo  [INFO] Die App funktioniert, ist aber langsamer.
     echo.
-    pip install torch torchaudio --index-url https://download.pytorch.org/whl/cpu --quiet
+    venv\Scripts\pip.exe install torch torchaudio --index-url https://download.pytorch.org/whl/cpu --quiet
 ) else (
     echo  [OK] NVIDIA GPU gefunden - installiere CUDA-Version.
     echo.
-    pip install torch torchaudio --index-url https://download.pytorch.org/whl/cu128 --quiet
+    venv\Scripts\pip.exe install torch torchaudio --index-url https://download.pytorch.org/whl/cu128 --quiet
 )
 
 if errorlevel 1 (

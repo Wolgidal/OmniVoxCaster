@@ -29,22 +29,16 @@ OmniVox Caster turns every dialogue into a cinematic audio experience, powered b
 | | |
 |---|---|
 | OS | Windows 10 / 11 |
-| Python | 3.10 or newer |
-| GPU | NVIDIA GPU recommended (CUDA). CPU works but is slower. |
+| Python | **3.10 or 3.11** (automatically installed if missing) |
+| GPU | NVIDIA GPU recommended (CUDA). CPU works but is much slower. |
 | Disk space | ~5 GB (dependencies + AI models) |
-| Internet | Required once for downloading AI models (~2 GB) |
+| Internet | Required for installation and first launch (AI model download ~2 GB) |
+
+> ⚠️ **Python 3.12 and newer are not supported.** Coqui TTS (the AI voice engine) requires Python 3.10 or 3.11. The installer handles this automatically.
 
 ---
 
-### Step 1 — Install Python
-
-Download Python 3.10+ from **https://www.python.org/downloads/**
-
-> ⚠️ During installation, check **"Add Python to PATH"**
-
----
-
-### Step 2 — Download OmniVox Caster
+### Step 1 — Download OmniVox Caster
 
 **Option A — via Git:**
 ```
@@ -56,20 +50,21 @@ Click **Code → Download ZIP** on GitHub, then extract the folder.
 
 ---
 
-### Step 3 — Run install.bat
+### Step 2 — Run install.bat
 
 Double-click **`install.bat`** in the extracted folder.
 
-The installer will:
-1. Create a virtual Python environment (`venv\`)
-2. Detect your GPU and install the correct PyTorch version (CUDA or CPU)
-3. Install all other dependencies
+The installer will automatically:
+1. Install Python 3.11 if no compatible version is found (3.10 or 3.11)
+2. Create a virtual Python environment (`venv\`)
+3. Install all dependencies
+4. Detect your GPU and install the correct PyTorch version (CUDA or CPU)
 
-This takes a few minutes. Internet connection required.
+This takes several minutes. Internet connection required.
 
 ---
 
-### Step 4 — Start the app
+### Step 3 — Start the app
 
 Double-click **`start.bat`**
 
