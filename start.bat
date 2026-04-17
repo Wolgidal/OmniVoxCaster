@@ -9,5 +9,4 @@ if not exist "venv\Scripts\activate.bat" (
     exit /b 1
 )
 
-call "venv\Scripts\activate.bat"
-python main_overlay.py
+start "" "venv\Scripts\pythonw.exe" main_overlay.py

@@ -11,12 +11,18 @@ warnings.filterwarnings("ignore", category=UserWarning, module="TTS")
 warnings.filterwarnings("ignore", category=UserWarning, module="transformers")
 
 import torch
+import torchaudio
 
 _orig_torch_load = torch.load
 def _patched_torch_load(f, *args, **kwargs):
     kwargs.setdefault("weights_only", False)
     return _orig_torch_load(f, *args, **kwargs)
 torch.load = _patched_torch_load
+
+try:
+    torchaudio.set_audio_backend("soundfile")
+except Exception:
+    pass
 
 import numpy as np
 import mss
@@ -38,7 +44,6 @@ APPDATA_DIR = os.path.join(os.environ.get("APPDATA", APP_DIR), "OmniVoxCaster")
 os.makedirs(APPDATA_DIR, exist_ok=True)
 SAMPLE_RATE = 22050
 VERSION     = "0.5"
-COPYRIGHT   = "© 2025 Andreas Wolgensinger"
 
 COLORS = {
     "bg":       "#09070a",
@@ -903,7 +908,7 @@ class OmniVoxCasterApp(ctk.CTk):
 
         ctk.CTkLabel(
             sub_row,
-            text=f"v{VERSION}  —  {COPYRIGHT}",
+            text=f"v{VERSION}",
             font=("Palatino Linotype", 9),
             text_color=COLORS["text_dim"],
         ).pack(side="right")
