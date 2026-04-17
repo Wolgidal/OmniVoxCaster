@@ -1,14 +1,42 @@
 import time
 import os
+import sys
 import threading
 import queue
 import configparser
 import shutil
 import re
 import warnings
+import traceback
 
 warnings.filterwarnings("ignore", category=UserWarning, module="TTS")
 warnings.filterwarnings("ignore", category=UserWarning, module="transformers")
+
+
+def _install_startup_logging():
+    app_dir = os.path.dirname(os.path.abspath(__file__))
+    log_path = os.path.join(app_dir, "startup.log")
+    log_stream = open(log_path, "a", encoding="utf-8", buffering=1)
+    timestamp = time.strftime("%d/%m/%Y %H:%M:%S")
+    log_stream.write(f"\n[{timestamp}] Starte OmniVox Caster ...\n")
+    log_stream.write(f"Projektpfad: {app_dir}\n")
+
+    sys.stdout = log_stream
+    sys.stderr = log_stream
+
+    def _log_exception(exc_type, exc_value, exc_tb):
+        traceback.print_exception(exc_type, exc_value, exc_tb, file=log_stream)
+        log_stream.flush()
+
+    sys.excepthook = _log_exception
+
+    if hasattr(threading, "excepthook"):
+        def _thread_exception(args):
+            _log_exception(args.exc_type, args.exc_value, args.exc_traceback)
+        threading.excepthook = _thread_exception
+
+
+_install_startup_logging()
 
 import torch
 import torchaudio
