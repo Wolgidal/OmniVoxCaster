@@ -250,6 +250,10 @@ TRANSLATIONS = {
         "status_hotkey_wait":    "◈  Warte auf neue Aktivierungs-Rune ...",
         "status_hotkey_saved":   "◈  Rune gespeichert: {}",
         "status_repeating":      "◈  Wiederhole Übertragung ...",
+        "hw_loading":            "Hardware: Prüfung läuft ...",
+        "hw_gpu":                "Hardware: GPU aktiv ({})",
+        "hw_cpu":                "Hardware: CPU aktiv ({})",
+        "hw_unknown":            "Hardware: Unbekannt",
         # Messageboxes
         "no_voice_title":           "Keine Stimmvorlage",
         "no_voice_msg":             "Bitte erst eine Stimmvorlage aufnehmen oder eine Datei laden.",
@@ -402,6 +406,10 @@ TRANSLATIONS = {
         "status_hotkey_wait":    "◈  Waiting for new activation rune ...",
         "status_hotkey_saved":   "◈  Rune saved: {}",
         "status_repeating":      "◈  Repeating transmission ...",
+        "hw_loading":            "Hardware: checking ...",
+        "hw_gpu":                "Hardware: GPU active ({})",
+        "hw_cpu":                "Hardware: CPU active ({})",
+        "hw_unknown":            "Hardware: unknown",
         # Messageboxes
         "no_voice_title":           "No Voice Sample",
         "no_voice_msg":             "Please record a voice sample or load a file first.",
@@ -838,6 +846,7 @@ class OmniVoxCasterApp(ctk.CTk):
         self.last_audio        = None
         self._is_repeating     = False
         self.cmd_queue         = queue.Queue()
+        self.runtime_info      = None
 
         self._setup_window()
         self._build_ui()
@@ -1169,7 +1178,15 @@ class OmniVoxCasterApp(ctk.CTk):
             font=("Palatino Linotype", 13),
             text_color=COLORS["yellow"],
         )
-        self.status_lbl.pack(pady=(2, 10))
+        self.status_lbl.pack(pady=(2, 2))
+
+        self.hardware_lbl = ctk.CTkLabel(
+            status_frame,
+            text=t("hw_loading"),
+            font=("Palatino Linotype", 11),
+            text_color=COLORS["text_dim"],
+        )
+        self.hardware_lbl.pack(pady=(0, 10))
 
         # ── Fußzeile ─────────────────────────────────────────────
         ctk.CTkFrame(self, fg_color=COLORS["accent"], height=1, corner_radius=0).pack(fill="x", padx=14)
@@ -1226,12 +1243,25 @@ class OmniVoxCasterApp(ctk.CTk):
             self.status_lbl.configure(text=t("status_ready"))
         else:
             self.status_lbl.configure(text=t("status_loading"))
+        self._refresh_hardware_label()
 
     def _target_lang_to_display(self, code):
         return {"auto": t("lang_original"), "de": t("lang_de"), "en": t("lang_en")}.get(code, t("lang_original"))
 
     def _display_to_target_lang(self, display):
         return {t("lang_original"): "auto", t("lang_de"): "de", t("lang_en"): "en"}.get(display, "auto")
+
+    def _refresh_hardware_label(self):
+        runtime = self.runtime_info
+        if not runtime:
+            self.hardware_lbl.configure(text=t("hw_loading"))
+            return
+
+        hw_name = runtime.get("hw_name") or "CPU"
+        if runtime.get("device") == "cuda":
+            self.hardware_lbl.configure(text=t("hw_gpu").format(hw_name))
+        else:
+            self.hardware_lbl.configure(text=t("hw_cpu").format(hw_name))
 
     # ----------------------------------------------------------
     #  STIMMVORLAGE
@@ -1461,6 +1491,8 @@ class OmniVoxCasterApp(ctk.CTk):
     def _load_models(self):
         try:
             runtime = _get_torch_runtime_info()
+            self.runtime_info = runtime
+            self.after(0, self._refresh_hardware_label)
             device = runtime["device"]
             hw_name = runtime["hw_name"]
             cuda_build = runtime["cuda_build"] or "cpu-only"
@@ -1488,6 +1520,7 @@ class OmniVoxCasterApp(ctk.CTk):
 
         except Exception as exc:
             print(f"[FEHLER] Beim Laden der Modelle: {exc}")
+            self.after(0, self._refresh_hardware_label)
             self._set_status(t("status_load_error"), COLORS["red"])
 
     # ----------------------------------------------------------
