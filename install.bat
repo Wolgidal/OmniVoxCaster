@@ -135,9 +135,9 @@ echo.
 :: Abhaengigkeiten installieren (torch kommt danach separat)
 :: --------------------------------------------------------
 
-:: Setuptools auf kompatible Version bringen (neuere Versionen brechen TTS-Build)
+:: Build-Umgebung vorbereiten (Cython + kompatible setuptools fuer TTS)
 echo  [INFO] Bereite Build-Umgebung vor ...
-venv\Scripts\pip.exe install "setuptools>=40,<70" wheel --quiet
+venv\Scripts\pip.exe install "setuptools>=40,<70" wheel Cython --quiet
 echo.
 
 echo  [INFO] Installiere Abhaengigkeiten ...
