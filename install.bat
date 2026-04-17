@@ -11,18 +11,23 @@ echo.
 
 :: --------------------------------------------------------
 :: Python 3.10 oder 3.11 suchen
+:: Wichtig: py -3.x --version gibt auch bei fehlendem Python
+:: errorlevel 0 zurueck - daher Ausgabe pruefen!
 :: --------------------------------------------------------
 set PYTHON_EXE=
 set PYVER=
 
-:: Python Launcher pruefen (py -3.11 / py -3.10)
-py -3.11 --version >nul 2>&1
+:: Python Launcher: Ausgabe auf "Python 3.11" pruefen
+for /f "tokens=*" %%v in ('py -3.11 --version 2^>^&1') do set PY311_OUT=%%v
+echo %PY311_OUT% | findstr /C:"Python 3.11" >nul 2>&1
 if not errorlevel 1 (
     set PYTHON_EXE=py -3.11
     set PYVER=3.11
     goto :python_ok
 )
-py -3.10 --version >nul 2>&1
+
+for /f "tokens=*" %%v in ('py -3.10 --version 2^>^&1') do set PY310_OUT=%%v
+echo %PY310_OUT% | findstr /C:"Python 3.10" >nul 2>&1
 if not errorlevel 1 (
     set PYTHON_EXE=py -3.10
     set PYVER=3.10
@@ -59,7 +64,7 @@ if not errorlevel 1 (
         set PYVER=%PYVER_CHECK%
         goto :python_ok
     )
-    echo  [WARN] Python %PYVER_CHECK% gefunden, aber benoetigt wird 3.10 oder 3.11.
+    echo  [WARN] Python %PYVER_CHECK% gefunden, wird nicht unterstuetzt (benoetigt 3.10 oder 3.11).
 )
 
 :: --------------------------------------------------------
@@ -68,7 +73,18 @@ if not errorlevel 1 (
 echo  [INFO] Python 3.11 wird automatisch installiert ...
 echo.
 
-:: Versuch 1: winget
+:: Versuch 1: py install (neuer Windows Python Launcher)
+py install 3.11 >nul 2>&1
+for /f "tokens=*" %%v in ('py -3.11 --version 2^>^&1') do set PY311_OUT=%%v
+echo %PY311_OUT% | findstr /C:"Python 3.11" >nul 2>&1
+if not errorlevel 1 (
+    set PYTHON_EXE=py -3.11
+    set PYVER=3.11
+    echo  [OK] Python 3.11 via py installer installiert.
+    goto :python_ok
+)
+
+:: Versuch 2: winget
 winget install Python.Python.3.11 --silent --accept-package-agreements --accept-source-agreements >nul 2>&1
 if exist "%LOCALAPPDATA%\Programs\Python\Python311\python.exe" (
     set PYTHON_EXE=%LOCALAPPDATA%\Programs\Python\Python311\python.exe
@@ -77,7 +93,7 @@ if exist "%LOCALAPPDATA%\Programs\Python\Python311\python.exe" (
     goto :python_ok
 )
 
-:: Versuch 2: Download per PowerShell
+:: Versuch 3: Download per PowerShell
 echo  [INFO] Lade Python 3.11 Installer herunter ...
 powershell -Command "Invoke-WebRequest -Uri 'https://www.python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe' -OutFile '%TEMP%\python311_setup.exe'" >nul 2>&1
 if errorlevel 1 (
