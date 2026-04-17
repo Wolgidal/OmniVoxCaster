@@ -20,6 +20,34 @@ if errorlevel 1 (
 )
 
 for /f "tokens=2 delims= " %%v in ('python --version 2^>^&1') do set PYVER=%%v
+for /f "tokens=1,2 delims=." %%a in ("%PYVER%") do (
+    set PYMAJOR=%%a
+    set PYMINOR=%%b
+)
+
+if %PYMAJOR% LSS 3 (
+    echo  [FEHLER] Python %PYVER% wird nicht unterstuetzt.
+    echo  Bitte installiere Python 3.10 oder 3.11.
+    pause
+    exit /b 1
+)
+if %PYMAJOR% EQU 3 if %PYMINOR% LSS 10 (
+    echo  [FEHLER] Python %PYVER% ist zu alt.
+    echo  Bitte installiere Python 3.10 oder 3.11.
+    pause
+    exit /b 1
+)
+if %PYMAJOR% EQU 3 if %PYMINOR% GTR 11 (
+    echo  [FEHLER] Python %PYVER% wird nicht unterstuetzt.
+    echo  Das KI-Modell (Coqui TTS) benoetigt Python 3.10 oder 3.11.
+    echo.
+    echo  Bitte installiere Python 3.11:
+    echo  https://www.python.org/downloads/release/python-3119/
+    echo  Wichtig: Haken bei "Add Python to PATH" setzen!
+    pause
+    exit /b 1
+)
+
 echo  [OK] Python %PYVER% gefunden.
 echo.
 
