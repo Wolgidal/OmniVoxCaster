@@ -927,7 +927,7 @@ class OmniVoxCasterApp(ctk.CTk):
     # ----------------------------------------------------------
     def _setup_window(self):
         self.title(f"OmniVox Caster  v{VERSION}")
-        self.geometry("400x740")
+        self.geometry("400x700")
         self.resizable(False, False)
         self.configure(fg_color=COLORS["bg"])
         self.attributes("-topmost", True)
@@ -1189,23 +1189,23 @@ class OmniVoxCasterApp(ctk.CTk):
 
         self.pause_btn = ctk.CTkButton(
             ctrl_row, text=t("btn_pause"),
-            width=174, height=40, state="disabled",
+            height=40, state="disabled",
             fg_color=COLORS["border"], hover_color=COLORS["ornament"],
             text_color=COLORS["text_dim"],
             font=("Palatino Linotype", 14, "bold"),
             command=self._toggle_pause,
         )
-        self.pause_btn.pack(side="left", padx=(0, 4))
+        self.pause_btn.pack(side="left", padx=(0, 4), fill="x", expand=True)
 
         self.repeat_btn = ctk.CTkButton(
             ctrl_row, text=t("btn_repeat"),
-            width=174, height=40, state="disabled",
+            height=40, state="disabled",
             fg_color=COLORS["border"], hover_color=COLORS["ornament"],
             text_color=COLORS["text_dim"],
             font=("Palatino Linotype", 14, "bold"),
             command=self._repeat_last,
         )
-        self.repeat_btn.pack(side="left", padx=(4, 0))
+        self.repeat_btn.pack(side="left", padx=(4, 0), fill="x", expand=True)
 
         # ── Status ───────────────────────────────────────────────
         status_wrapper = ctk.CTkFrame(self, fg_color=COLORS["accent"], corner_radius=8)
@@ -1235,7 +1235,6 @@ class OmniVoxCasterApp(ctk.CTk):
             text_color=COLORS["text_dim"],
         )
         self.hardware_lbl.pack(pady=(0, 10))
-
 
     # ----------------------------------------------------------
     #  SPRACHE UMSCHALTEN
@@ -1697,7 +1696,9 @@ class OmniVoxCasterApp(ctk.CTk):
             xtts = self.tts.synthesizer.tts_model
 
             t0 = time.time()
-            text_chunks = self._split_text("... " + text)
+            paragraphs = [p.strip() for p in text.split('\n\n') if p.strip()]
+            if not paragraphs:
+                paragraphs = [text]
             device = (self.runtime_info or {}).get("device", "cpu")
             prebuffer_seconds = 1.2 if device == "cuda" else 2.4
 
@@ -1758,21 +1759,38 @@ class OmniVoxCasterApp(ctk.CTk):
 
             threading.Thread(target=audio_player, daemon=True).start()
 
+            para_silence = np.zeros(int(24000 * 0.45), dtype='float32')
+
             try:
-                for text_chunk in text_chunks:
+                for p_idx, para in enumerate(paragraphs):
                     if self._stop_playback:
                         break
-                    for chunk in xtts.inference_stream(
-                        text_chunk, tts_lang,
-                        self.gpt_cond_latent, self.speaker_embedding,
-                        speed=self.speed,
-                    ):
+                    prefix = "... " if p_idx == 0 else ""
+                    for text_chunk in self._split_text(prefix + para):
                         if self._stop_playback:
                             break
-                        np_chunk = chunk.squeeze().cpu().numpy()
-                        if not self._queue_audio_chunk(audio_queue, np_chunk):
-                            break
-                        collected_audio.append(np_chunk)
+                        for chunk in xtts.inference_stream(
+                            text_chunk, tts_lang,
+                            self.gpt_cond_latent, self.speaker_embedding,
+                            speed=self.speed,
+                        ):
+                            if self._stop_playback:
+                                break
+                            np_chunk = chunk.squeeze().cpu().numpy()
+                            if not self._queue_audio_chunk(audio_queue, np_chunk):
+                                break
+                            collected_audio.append(np_chunk)
+                        # Pause nach Satz je nach terminalem Satzzeichen
+                        if not self._stop_playback:
+                            terminal = text_chunk.rstrip()[-1] if text_chunk.rstrip() else ''
+                            pause_secs = {'.': 0.18, '?': 0.22, '!': 0.20}.get(terminal, 0)
+                            if pause_secs:
+                                sil = np.zeros(int(24000 * pause_secs), dtype='float32')
+                                self._queue_audio_chunk(audio_queue, sil)
+                                collected_audio.append(sil)
+                    if p_idx < len(paragraphs) - 1 and not self._stop_playback:
+                        self._queue_audio_chunk(audio_queue, para_silence)
+                        collected_audio.append(para_silence)
             finally:
                 self._queue_audio_chunk(audio_queue, None)
                 playback_finished.wait()
@@ -1809,7 +1827,22 @@ class OmniVoxCasterApp(ctk.CTk):
         text = text.replace(";", ",")
         for wrong, correct in self.replacements.items():
             text = re.sub(re.escape(wrong), correct, text, flags=re.IGNORECASE)
-        return re.sub(r"\s+", " ", text).strip()
+        # Normalize paragraph breaks (2+ newlines) → keep as separator
+        text = re.sub(r'\n[ \t]*\n+', '\n\n', text)
+        # Single newlines (OCR line wraps) → space
+        text = re.sub(r'(?<!\n)\n(?!\n)', ' ', text)
+        # Clean up extra spaces within paragraphs
+        text = re.sub(r'[ \t]+', ' ', text)
+        # Colons introduce a pause — keep them (don't collapse to comma)
+        # Ensure sentences without terminal punctuation get a period
+        paragraphs = text.split('\n\n')
+        cleaned = []
+        for para in paragraphs:
+            para = para.strip()
+            if para and para[-1] not in '.!?,':
+                para += '.'
+            cleaned.append(para)
+        return '\n\n'.join(cleaned)
 
     def _split_text(self, text, max_chars=240):
         sentences = re.split(r'(?<=[.!?])\s+', text)
@@ -1818,7 +1851,8 @@ class OmniVoxCasterApp(ctk.CTk):
         for sentence in sentences:
             if not current:
                 current = sentence
-            elif len(current) + 1 + len(sentence) <= max_chars:
+            elif len(current) < 35 and len(current) + 1 + len(sentence) <= max_chars:
+                # Nur sehr kurze Sätze zusammenfassen, damit XTTS Satzzeichen sieht
                 current += " " + sentence
             else:
                 chunks.append(current)

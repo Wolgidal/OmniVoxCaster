@@ -1,6 +1,10 @@
-TTS
+TTS==0.22.0
 numpy==1.26.4
 pandas==1.5.3
+transformers==4.39.3
+torch
+torchaudio
+torchvision
 mss
 easyocr
 keyboard
@@ -8,4 +12,5 @@ customtkinter
 sounddevice
 soundfile
 pydub
-transformers==4.39.3
+deep-translator
+langdetect

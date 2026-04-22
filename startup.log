@@ -14,3 +14,308 @@
 
 [BEREIT] Dr�cke AKTIVIEREN und dann [ALT+Q] zum Ausw�hlen.
 
+
+[17/04/2026 22:30:44] Starte OmniVox Caster ...
+Projektpfad: C:\Projekte\OmniVoxCaster
+=======================================================
+  OmniVox Caster — Voxcaster Imperialis
+  GUI wird gestartet ...
+=======================================================
+[INFO] torch: 2.5.0+cu124, Build-CUDA: 12.4, Geraet: NVIDIA GeForce RTX 4090
+[INFO] Lade TTS-Modell (XTTSv2) ...
+ > tts_models/multilingual/multi-dataset/xtts_v2 is already downloaded.
+ > Using model: xtts
+[INFO] TTS geladen.
+[INFO] Lade OCR-Modell (EasyOCR) ...
+[INFO] OCR geladen.
+[INFO] Stimmvorlage vorberechnet.
+
+[BEREIT] Drücke AKTIVIEREN und dann [ALT+Q] zum Auswählen.
+
+
+--- ERKANNTER TEXT (EN) ---
+Magistrix Landra Dawnstrider has sent = request for aid dealing with the local Lightbloom. While typically harmless, it has recently begun to grow at an incredible rate_ Meet up with Arator in Fairbreeze Village to investigate the threat and provide what assistance you can_
+----------------------
+
+--- ÜBERSETZT (DE) ---
+Magistrix Landra Dawnstrider hat eine Bitte um Hilfe bei der Bewältigung der örtlichen Lightbloom gesendet. Obwohl es normalerweise harmlos ist, hat es in letzter Zeit begonnen, unglaublich schnell zu wachsen_ Treffen Sie sich mit Arator im Fairbreeze Village, um die Bedrohung zu untersuchen und Ihnen zu helfen, so viel Sie können_
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.8s) nach 1.30s
+[INFO] Verarbeitung abgeschlossen in 24.2s
+
+--- ERKANNTER TEXT (DE) ---
+Während ein gewisser Magier mit dem Hirn eines Wyrms seine Zeit mit untauglicher Magie verschwendet, werden wir den Fall tatsächiich lösen. Die Tiere hier haben das Tagebuch wahrscheinlich gefressen. Zeit, sie auszunehmen und es zurückzuholen _ Wenn das Tagebuch da drin ist, werden wir es finden__ im Gegensatz zu einem Erbsenhirn, das sein eigenes geistloses Ego nicht finden würde, wenn es nicht so aufgeblasen wäre_
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.8s) nach 2.02s
+[INFO] Verarbeitung abgeschlossen in 32.8s
+
+--- ERKANNTER TEXT (DE) ---
+Na toll, noch mehr leuchtende Projektionen und Rachegeister, aber immer noch kein Tagebuch. Geht aus dem Weg: Ich mache dem Unfug ein Ende und verfolge es anständig zurück _
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.8s) nach 1.67s
+[INFO] Verarbeitung abgeschlossen in 13.3s
+
+--- ERKANNTER TEXT (DE) ---
+Was soll das heißen, das Tagebuch war in keinem davon? Wie kann das sein? Das widerspricht aller Logik! Wenn die Tiere es nicht gefre 5i0p haben, wo zum Wirbelnden Nether ist es hin?
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.8s) nach 2.11s
+[INFO] Verarbeitung abgeschlossen in 19.9s
+
+--- ERKANNTER TEXT (DE) ---
+Waldläufer Vardis sagt: Brillant: Vielleicht hat das Tagebuch einfach Beine bekommen und ist davongelaufen! Magister Meledor sagt: Wenn wir nur einen greifbaren Hinweis hätten, anstatt im Dunkeln umherzutappen_ Magister Meledor sagt: Ist das Waldläufer Vardis sagt: das Tagebuch?! uma schreit: WUFF! Magister Meledor sagt: Schnell! Hinter dem räudigen Köter her! Waldläufer Vardis sagt: Folgt uns!
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.8s) nach 2.34s
+[INFO] Verarbeitung abgeschlossen in 38.5s
+
+--- ERKANNTER TEXT (DE) ---
+Ausgerechnet ein Hund? Das ist der Dieb, den wir jagen? Und jetzt müssen wir ihn auch noch vor einem Luchs retten? Dieser Tag hat wirklich eine ausgesprochen_ ärgerliche Wendung genommen. Wie dem auch sei, wir werden das Tagebuch zurückbeschaffen Obwohl ich mich frage, ob dieser Hund die Tragweite seiner Taten versteht.
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.8s) nach 2.26s
+[INFO] Verarbeitung abgeschlossen in 26.6s
+
+--- ERKANNTER TEXT (DE) ---
+Ein Hund, ein Luchs und jetzt auch noch ein zerstörtes Tagebuch. Ich muss schon sagen, ich habe schon geringere Pechsträhnen gesehen. <Meledor hält das zerkaute Tagebuch mit spitzen Fingern hoch > Das Schicksal dieses Tagebuchs war besiegelt, lange bevor wir es gefunden haben: Es ist definitiv nicht mehr zu retten. Einmal mehr stellt sich mein Vertrauen in irgendetwas anderes als arkane Präzision als_. fehlgeleitet heraus
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.8s) nach 2.00s
+[INFO] Verarbeitung abgeschlossen in 35.7s
+
+--- ERKANNTER TEXT (DE) ---
+<Luma steht mit gespitzten Ohren vor Euch, dankbar für Eure Hilfe_ Sie bellt kurz, wedelt einmal mit dem Schwanz, macht einige Schritte nach vorn und bleibt stehen _ Erwartungsvoll blickt sie zurück- Ihre Körpersprache scheint zu sagen: "Kommt schon, folgt mir!'
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.3s) nach 0.99s
+[!] Warning: The text length exceeds the character limit of 253 for language 'de', this might cause truncated audio.
+[INFO] Verarbeitung abgeschlossen in 21.3s
+
+--- ERKANNTER TEXT (DE) ---
+<Luma steht neben einem großen Haufen Schnickschnack und Schätzchen. Anscheinend wollte sie Euch den zeigen. Luma hechelt und schenkt Euch ein breites, zahniges Grinsen. Ihre Augenbrauen lächeln wie die Sonne Sie wirkt unglaublich stolz und sieht Euch erwartungsvoll an.>
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.8s) nach 2.02s
+[INFO] Verarbeitung abgeschlossen in 21.9s
+
+--- ERKANNTER TEXT (DE) ---
+<Luma schubst_eine kleine Belohnung in Eure Hand, wie als Dank für Eure Hilfe. Vielleicht gibt es doch keinen Grund zur Sorge über die gestohlenen Gegenstände im Schatzhaufen =
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.8s) nach 1.45s
+[INFO] Verarbeitung abgeschlossen in 15.6s
+
+--- ERKANNTER TEXT (DE) ---
+Magistrix Landra Morgenwandler hat um Hilfe im Kampf legen die hiesige Lichtblüte gebeten: Obwohl sie gSgenedieshies harmlos ist, hat sie unlängst mit einer unglaublichen Geschwindigkeit zu wachsen begonnen. Trefft Euch mit Arator in Morgenluft, um das zu untersuchen, und helft auf jede erdenkliche Weise.
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.8s) nach 1.55s
+[INFO] Verarbeitung abgeschlossen in 2.4s
+
+--- ERKANNTER TEXT (DE) ---
+Magistrix Landra Morgenwandler hat um Hilfe im Kampf gBfichedie ehses die hiesige Lichtblüte gebeten: Obwohl sie harmlos ist, hat sie unlängst mit einer unglaublichen Geschwindigkeit zu wachsen begonnen. Trefft Euch mit Arator in Morgenluft, um das zu untersuchen, und helft auf jede erdenkliche Weise.
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.8s) nach 1.34s
+[INFO] Verarbeitung abgeschlossen in 24.4s
+
+--- ERKANNTER TEXT (DE) ---
+Diese Bestien stören den Frieden meiner Stadt, doch wir haben ein größeres Problem. In der Nähe schleicht ein wildes Luchsweibchen umher, dem wir den Namen "Messermaul" gegeben haben. Eigentlich hat sie immer Abstand gehal Iten, doch die aktuelle Lage hat sie dreister gemacht. Hier rennen viele Kinder rum und schon mehrfach haben die Wachen diese Kreatur dabei erwischt, wie sie die Kleinen beäugt hat, als wären sie ein Leckerbissen, der nur darauf wartet, gefressen zu werden! Haltet sie auf, bevor sie tatsächlich zuschlägt!
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.8s) nach 1.37s
+[INFO] Verarbeitung abgeschlossen in 36.8s
+
+[22/04/2026 16:55:13] Starte OmniVox Caster ...
+Projektpfad: C:\Projekte\OmniVoxCaster
+=======================================================
+  OmniVox Caster — Voxcaster Imperialis
+  GUI wird gestartet ...
+=======================================================
+[INFO] torch: 2.5.0+cu124, Build-CUDA: 12.4, Geraet: NVIDIA GeForce RTX 4090
+[INFO] Lade TTS-Modell (XTTSv2) ...
+ > tts_models/multilingual/multi-dataset/xtts_v2 is already downloaded.
+ > Using model: xtts
+[INFO] TTS geladen.
+[INFO] Lade OCR-Modell (EasyOCR) ...
+[INFO] OCR geladen.
+[INFO] Stimmvorlage vorberechnet.
+
+[BEREIT] Drücke AKTIVIEREN und dann [ALT+Q] zum Auswählen.
+
+
+--- ERKANNTER TEXT (EN) ---
+With so many new residents, mail in the neighborhoods is really starting to pile up. So many routes and just _ one of me! If only could deputize an assistant mail carrier.- Say, Wolgemorph, would you be willing to help out? 've got some juicy parcels from the dead letter office could offer in thanks_
+----------------------
+
+--- ÜBERSETZT (DE) ---
+Bei so vielen neuen Bewohnern häuft sich die Post in den Vierteln regelrecht. So viele Routen und nur _ eine von mir! Wenn ich doch nur einen stellvertretenden Postboten vertreten könnte. – Sag mal, Wolgemorph, wärst du bereit zu helfen? Ich habe ein paar saftige Pakete vom Büro für unzustellbare Briefe, die ich als Dankeschön anbieten könnte_
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.8s) nach 2.18s
+[INFO] Verarbeitung abgeschlossen in 25.3s
+
+--- ERKANNTER TEXT (EN) ---
+Pardon the intrusion, Wolgemorph! Im delivering summons from Ranger Captain Lilatha. She'$ requested your presence at her staging grounds overlooking the Bazaar near the north gate of Silvermoon. Our lands are once 'again under threat and we'll need all the support we can get Report to her when you can!
+----------------------
+
+--- ÜBERSETZT (DE) ---
+Verzeihen Sie die Störung, Wolgemorph! Ich überbringe eine Vorladung von Ranger-Captain Lilatha. Sie hat um Ihre Anwesenheit auf ihrem Stützpunkt mit Blick auf den Basar in der Nähe des Nordtors von Silbermond gebeten. Unser Land ist wieder einmal bedroht und wir werden jede Unterstützung brauchen, die wir kriegen können. Melden Sie sich bei ihr, wenn Sie können!
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.8s) nach 1.30s
+[INFO] Verarbeitung abgeschlossen in 25.4s
+
+--- ERKANNTER TEXT (EN) ---
+Greetings, acolyte! Behold the wonder of this domain overflowing with GLORIOUS ABUNDANCE! It surges, it swells, rejects all containment! Your devotion to my divine self is deserving of some small benevolence. This time, in the form of Unalloyed Abundance! And take note, gracious acolyte: Certain offerings, such as Fused Vitality, will now appear amongst other purveyors. Perhaps you will encounter them, should your escapades ever pass near the Zul'Aman Depths
+----------------------
+
+--- ÜBERSETZT (DE) ---
+Sei gegrüßt, Akolyth! Schauen Sie sich das Wunder dieser Domäne an, die von herrlicher Fülle überströmt ist! Es strömt, es schwillt an, weist jede Eindämmung zurück! Deine Hingabe an mein göttliches Selbst verdient ein wenig Wohlwollen. Diesmal in Form von Unalloyed Abundance! Und beachten Sie, gnädiger Akolyth: Bestimmte Angebote, wie zum Beispiel Fused Vitality, werden jetzt bei anderen Anbietern erscheinen. Vielleicht werden Sie ihnen begegnen, sollten Ihre Eskapaden jemals in der Nähe der Zul'Aman-Tiefen stattfinden
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.8s) nach 1.85s
+[INFO] Verarbeitung abgeschlossen in 33.4s
+
+--- ERKANNTER TEXT (DE) ---
+Vorladung des Waldläuferhauptmanns Eine Bedrohung mag gebannt sein, doch innerhalb unserer Grenzen gibt es weiterhin Gefahren von allen Seiten. Ein Hochlord der Domanaar sammelt die Diener der Leere, um das entstandene Machtvakuum zu füllen. Fremdartige Astrale und ihre Maschinen rücken auf unsere Siedlungen vor. Selbst die Überreste der Zwielichtklinge und örtliche Nagastämme wurden durch das Chaos ermutigt. Wir könnten Eure Erfahrung im Umgang mit solchen Bedrohungen gut gebrauchen: Und ich habe auch schon genau die richtige Aufgabe für Euch.
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.8s) nach 2.39s
+[INFO] Verarbeitung abgeschlossen in 40.7s
+
+--- ERKANNTER TEXT (DE) ---
+Die Bedrohungen, die an den Grenzen von Immersang und Zul'Aman lauern, sind unnachgiebig, Wolgemorph, aber das ist nicht das erste Mal, dass wir es mit Angriffen dieser Art zu tun haben. Sei es die Mächte der Leere, plündernde Astrale oder die Zwielichtklinge_ wir werden bereit sein _
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.8s) nach 1.61s
+[INFO] Verarbeitung abgeschlossen in 24.5s
+
+--- ERKANNTER TEXT (DE) ---
+Uns liegen Berichte über Leerenvorstöße im Immersangwald und in Zul'Aman vor. Ihr müsst sofort aufbrechen und einen dieser Vorstöße untersuchen. Ich werde auf Eurer Karte den letzten Standort unserer Späher markieren.
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.8s) nach 1.00s
+[INFO] Verarbeitung abgeschlossen in 16.4s
+
+[22/04/2026 19:03:07] Starte OmniVox Caster ...
+Projektpfad: C:\Projekte\OmniVoxCaster
+=======================================================
+  OmniVox Caster — Voxcaster Imperialis
+  GUI wird gestartet ...
+=======================================================
+[INFO] torch: 2.5.0+cu124, Build-CUDA: 12.4, Geraet: NVIDIA GeForce RTX 4090
+[INFO] Lade TTS-Modell (XTTSv2) ...
+ > tts_models/multilingual/multi-dataset/xtts_v2 is already downloaded.
+ > Using model: xtts
+[INFO] TTS geladen.
+[INFO] Lade OCR-Modell (EasyOCR) ...
+[INFO] OCR geladen.
+[INFO] Stimmvorlage vorberechnet.
+
+[BEREIT] Drücke AKTIVIEREN und dann [ALT+<] zum Auswählen.
+
+
+--- ERKANNTER TEXT (DE) ---
+Endlich reiten wir = zum Ruhm und lassen Gerechtigkeit walten über dieses widerwärtige Geschöpf, das die Leere gegen uns wendet. Heute werden Xal'ataths Streitkräfte sich unserem Urteil stellen. Die Stunde ist gekommen, in der wir zurückschlagen! Kommt, setzen wir diesem Feind ein Ende_
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.8s) nach 1.91s
+[INFO] Verarbeitung abgeschlossen in 24.2s
+
+[22/04/2026 19:13:20] Starte OmniVox Caster ...
+Projektpfad: C:\Projekte\OmniVoxCaster
+=======================================================
+  OmniVox Caster — Voxcaster Imperialis
+  GUI wird gestartet ...
+=======================================================
+[INFO] torch: 2.5.0+cu124, Build-CUDA: 12.4, Geraet: NVIDIA GeForce RTX 4090
+[INFO] Lade TTS-Modell (XTTSv2) ...
+ > tts_models/multilingual/multi-dataset/xtts_v2 is already downloaded.
+ > Using model: xtts
+[INFO] TTS geladen.
+[INFO] Lade OCR-Modell (EasyOCR) ...
+[INFO] OCR geladen.
+[INFO] Stimmvorlage vorberechnet.
+
+[BEREIT] Drücke AKTIVIEREN und dann [ALT+<] zum Auswählen.
+
+
+--- ERKANNTER TEXT (DE) ---
+Die Magister haben in Immersang eine Handvoll Runensteine platziert 'geje ! einzelne ist mit Arkanmagie aufgeladen, die die Lichtblüte abwehrt. Wie Ihr Euch vielleicht denken könnt, benötigen die Runensteine eine gewaltige 'Menge Energie, um zu funktionieren. Die Magister speisen sie mit latentem Arkana, aber diese Art von Macht zieht eine Menge ungewollte Aufmerksamkeit auf sich. Schlechte Aufmerksamkeit. Als Weltenwanderer ist es unsere Pflicht, Immersang vor solchen Gefahren zu beschützen, besonders wenn die Zuflucht auf uns schaut. Ladet die Runensteine auf und bekämpft alles, was Euch daran hindern wilL.
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.8s) nach 1.88s
+[INFO] Verarbeitung abgeschlossen in 43.2s
+
+[22/04/2026 19:17:23] Starte OmniVox Caster ...
+Projektpfad: C:\Projekte\OmniVoxCaster
+=======================================================
+  OmniVox Caster — Voxcaster Imperialis
+  GUI wird gestartet ...
+=======================================================
+[INFO] torch: 2.5.0+cu124, Build-CUDA: 12.4, Geraet: NVIDIA GeForce RTX 4090
+[INFO] Lade TTS-Modell (XTTSv2) ...
+ > tts_models/multilingual/multi-dataset/xtts_v2 is already downloaded.
+ > Using model: xtts
+[INFO] TTS geladen.
+[INFO] Lade OCR-Modell (EasyOCR) ...
+[INFO] OCR geladen.
+[INFO] Stimmvorlage vorberechnet.
+
+[BEREIT] Drücke AKTIVIEREN und dann [ALT+<] zum Auswählen.
+
+
+--- ERKANNTER TEXT (DE) ---
+Die Magister haben in ganz Immersang eine Handvoll Runensteine platziert: Jeder einzelne ist mit Arkanmagie aufgeladen, die die Lichtblüte abwehrt. Wie Ihr Euch vielleicht denken könnt, benötigen die Runensteine eine gewaltige Menge Energie, um zu funktionieren: Die Magister speisen sie mit latentem Arkana, aber diese Art von Macht zieht eine Menge ungewollte Aufmerksamkeit auf sich. Schlechte Aufmerksamkeit. Als Weltenwanderer ist es unsere Pflicht, Immersang vor solchen Gefahren zu beschützen, besonders wenn die Zuflucht auf uns schaut. Ladet die Runensteine auf und bekämpft alles, was Euch daran hindern wilL.
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.8s) nach 2.02s
+[INFO] Verarbeitung abgeschlossen in 46.2s
+
+[22/04/2026 19:21:18] Starte OmniVox Caster ...
+Projektpfad: C:\Projekte\OmniVoxCaster
+=======================================================
+  OmniVox Caster — Voxcaster Imperialis
+  GUI wird gestartet ...
+=======================================================
+[INFO] torch: 2.5.0+cu124, Build-CUDA: 12.4, Geraet: NVIDIA GeForce RTX 4090
+[INFO] Lade TTS-Modell (XTTSv2) ...
+ > tts_models/multilingual/multi-dataset/xtts_v2 is already downloaded.
+ > Using model: xtts
+[INFO] TTS geladen.
+[INFO] Lade OCR-Modell (EasyOCR) ...
+[INFO] OCR geladen.
+[INFO] Stimmvorlage vorberechnet.
+
+[BEREIT] Drücke AKTIVIEREN und dann [ALT+<] zum Auswählen.
+
+
+[22/04/2026 19:22:51] Starte OmniVox Caster ...
+Projektpfad: C:\Projekte\OmniVoxCaster
+=======================================================
+  OmniVox Caster — Voxcaster Imperialis
+  GUI wird gestartet ...
+=======================================================
+[INFO] torch: 2.5.0+cu124, Build-CUDA: 12.4, Geraet: NVIDIA GeForce RTX 4090
+[INFO] Lade TTS-Modell (XTTSv2) ...
+ > tts_models/multilingual/multi-dataset/xtts_v2 is already downloaded.
+ > Using model: xtts
+[INFO] TTS geladen.
+[INFO] Lade OCR-Modell (EasyOCR) ...
+[INFO] OCR geladen.
+[INFO] Stimmvorlage vorberechnet.
+
+[BEREIT] Drücke AKTIVIEREN und dann [ALT+<] zum Auswählen.
+
+
+--- ERKANNTER TEXT (DE) ---
+Ich habe einen Brief erhalten. Kein Siegel, kein Name. Nur ein zusammengefaltetes Stück Pergament und eine Handschrift, die ich überall erkennen würde Die Nachricht war kurz, er ist kein Mann ' großer Worte _ Ich kenne seine Familie schon lange. Wenn sie sich bei mir melden, antworte ich immer.
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.8s) nach 2.06s
+[INFO] Verarbeitung abgeschlossen in 25.7s
+
+--- ERKANNTER TEXT (DE) ---
+Endlich reiten wir zum Ruhm und lassen Gerechtigkeit walten über dieses widerwärtige Geschöpf, das die Leere gegen uns wendet Heute werden Xal'ataths Streitkräfte sich unserem Urteil stellen: Die Stunde ist gekommen, in der wir zurückschlagen! Kommt, setzen wir diesem Feind ein Ende_.
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.6s) nach 1.17s
+[INFO] Verarbeitung abgeschlossen in 24.9s
+
+--- ERKANNTER TEXT (DE) ---
+Die Leere versucht uns zu spalten, einen Keil zwischen unsere Familien und das Königreich selbst zu treiben. Das dürfen wir nicht zulassen. Wohin ich mich auch wende, höre ich von Problemen: vertriebene Familien, überforderte Verteidiger, überlastete Heiler. Keine Klinge und kein Zauber allein wird diese Flut wenden, aber die Stärke vieler vereinter Herzen schon. Geht und helft dort, wo es am dringendsten ist.
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.8s) nach 1.12s
+[INFO] Verarbeitung abgeschlossen in 37.2s
+
+--- ERKANNTER TEXT (DE) ---
+Bei so vielen neuen Anwohnern komme ich mit dem hohen Aufkommen an ostsendungen nicht mehr hinterher. So viele Routen, die ich ganz allein bedienen muss! Wenn ich doch nur einen Postbotenassistenten anwerben könnte... Sagt, Wolgemorph, würdet Ihr gerne aushelfen? Ich könnte Euch einige pralle, nicht zustellbare Pakete als Belohnung anbieten.
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.8s) nach 1.20s
+[INFO] Verarbeitung abgeschlossen in 29.7s
+
+--- ERKANNTER TEXT (DE) ---
+Uns liegen Berichte über Leerenvorstöße im Immersangwald und in Zul'Aman vor. Ihr müsst sofort aufbrechen und einen dieser Vorstöße untersuchen. Ich werde auf Eurer Karte den letzten Standort unserer Späher markieren:.
+----------------------
+[INFO] Wiedergabe startet (Puffer: 1.8s) nach 1.25s
+[INFO] Verarbeitung abgeschlossen in 18.8s
