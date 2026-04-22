@@ -156,7 +156,7 @@ COLORS = {
 
 DEFAULT_CONFIG = """\
 [Einstellungen]
-hotkey = alt+q
+hotkey = alt+<
 sprache = de
 stimme_datei = stimme_vorlage.wav
 ausgabe_datei = quest_output.wav
@@ -245,19 +245,17 @@ TRANSLATIONS = {
              "ÜBERTRAGUNGSRATE\n"
              "Stellt die Sprechgeschwindigkeit ein (0.5× bis 2.0×).\n\n"
              "AKTIVIERUNGS-RUNE\n"
-             "Der Tastatur-Hotkey zum Auslösen der Texterkennung. Standard: ALT+Q.\n"
+             "Der Tastatur-Hotkey zum Auslösen der Texterkennung. Standard: ALT+<.\n"
              "Klicke auf den Hotkey-Button und drücke die gewünschte Tastenkombination."),
             ("❖  SCHRITT 3 — VERWENDEN",
              "1. Klicke auf ▶ AKTIVIEREN (erst verfügbar, nachdem die KI-Modelle geladen sind).\n"
-             "2. Drücke den Hotkey (z. B. ALT+Q).\n"
+             "2. Drücke den Hotkey (z. B. ALT+<).\n"
              "3. Ziehe mit der Maus einen Rahmen um den Text, den du vorlesen möchtest.\n"
              "4. OmniVox Caster erkennt den Text und liest ihn in der gewählten Stimme vor."),
             ("❖  STEUERUNG WÄHREND DER WIEDERGABE",
              "⏸  Pause        — Wiedergabe pausieren / fortsetzen.\n"
              "🔁  Wiederholen — Letzten Text nochmals vorlesen.\n"
-             "⏹  Stoppen     — Klicke erneut auf Wiederholen während der Wiedergabe.\n"
-             "ESC              — Aktuelle Wiedergabe sofort abbrechen.\n"
-             "ESC (inaktiv)   — App deaktivieren."),
+             "⏹  Stoppen     — Klicke erneut auf Wiederholen während der Wiedergabe."),
             ("❖  TECHNISCHE HINWEISE",
              "• Beim ersten Start werden KI-Modelle heruntergeladen und geladen "
              "(EasyOCR + Coqui XTTSv2). Dies kann einige Minuten dauern.\n"
@@ -282,7 +280,6 @@ TRANSLATIONS = {
         "btn_resume":       "▶   Weiter",
         "btn_repeat":       "🔁   Wiederholen",
         "btn_stop_repeat":  "⏹   Stoppen",
-        "footer_esc":       "✠   ESC — Übertragung abbrechen   ✠",
         # Status messages
         "status_loading":        "◈  Lade Modelle ...",
         "status_ready":          "◈  Systeme bereit — Voxcaster online",
@@ -401,19 +398,17 @@ TRANSLATIONS = {
              "TRANSMISSION RATE\n"
              "Sets the speaking speed (0.5× to 2.0×).\n\n"
              "ACTIVATION RUNE\n"
-             "The keyboard hotkey to trigger text recognition. Default: ALT+Q.\n"
+             "The keyboard hotkey to trigger text recognition. Default: ALT+<.\n"
              "Click the hotkey button and press the desired key combination."),
             ("❖  STEP 3 — USING",
              "1. Click ▶ ACTIVATE (only available after AI models have loaded).\n"
-             "2. Press the hotkey (e.g. ALT+Q).\n"
+             "2. Press the hotkey (e.g. ALT+<).\n"
              "3. Drag a frame around the text you want to read.\n"
              "4. OmniVox Caster recognizes the text and reads it in the selected voice."),
             ("❖  CONTROLS DURING PLAYBACK",
              "⏸  Pause       — Pause / resume playback.\n"
              "🔁  Repeat      — Re-read the last text.\n"
-             "⏹  Stop        — Click Repeat again during playback.\n"
-             "ESC             — Immediately abort current playback.\n"
-             "ESC (inactive)  — Deactivate the app."),
+             "⏹  Stop        — Click Repeat again during playback."),
             ("❖  TECHNICAL NOTES",
              "• On first launch, AI models are downloaded and loaded "
              "(EasyOCR + Coqui XTTSv2). This may take a few minutes.\n"
@@ -438,7 +433,6 @@ TRANSLATIONS = {
         "btn_resume":       "▶   Resume",
         "btn_repeat":       "🔁   Repeat",
         "btn_stop_repeat":  "⏹   Stop",
-        "footer_esc":       "✠   ESC — Abort Transmission   ✠",
         # Status messages
         "status_loading":        "◈  Loading models ...",
         "status_ready":          "◈  Systems ready — Voxcaster online",
@@ -864,7 +858,7 @@ class OmniVoxCasterApp(ctk.CTk):
         if _ui_lang not in TRANSLATIONS:
             _ui_lang = "de"
 
-        self.hotkey      = self.cfg.get("Einstellungen", "hotkey",         fallback="alt+q")
+        self.hotkey      = self.cfg.get("Einstellungen", "hotkey",         fallback="alt+<")
         self.target_lang = self.cfg.get("Einstellungen", "ausgabesprache", fallback="auto")
 
         self.voices_dir = os.path.join(APPDATA_DIR, "voices")
@@ -1242,15 +1236,6 @@ class OmniVoxCasterApp(ctk.CTk):
         )
         self.hardware_lbl.pack(pady=(0, 10))
 
-        # ── Fußzeile ─────────────────────────────────────────────
-        ctk.CTkFrame(self, fg_color=COLORS["accent"], height=1, corner_radius=0).pack(fill="x", padx=14)
-        self.w_lbl_footer = ctk.CTkLabel(
-            self,
-            text=t("footer_esc"),
-            font=("Palatino Linotype", 11),
-            text_color=COLORS["ornament"],
-        )
-        self.w_lbl_footer.pack(pady=(4, 8))
 
     # ----------------------------------------------------------
     #  SPRACHE UMSCHALTEN
@@ -1271,8 +1256,6 @@ class OmniVoxCasterApp(ctk.CTk):
         self.w_lbl_outlang.configure(text=f"❖  {t('section_outlang')}")
         self.w_lbl_speed.configure(text=f"❖  {t('section_speed')}")
         self.w_lbl_hotkey.configure(text=f"❖  {t('section_hotkey')}")
-        self.w_lbl_footer.configure(text=t("footer_esc"))
-
         # Output language dropdown: remap current value
         new_values = t("lang_values")
         self.lang_dropdown.configure(values=new_values)
@@ -1504,7 +1487,6 @@ class OmniVoxCasterApp(ctk.CTk):
     def _activate(self):
         self.is_active = True
         keyboard.add_hotkey(self.hotkey, self._hotkey_pressed)
-        keyboard.add_hotkey("esc", self._esc_pressed)
         self.start_btn.configure(
             text=t("btn_deactivate"),
             fg_color=COLORS["accent2"], hover_color="#6b1010",
@@ -1583,13 +1565,6 @@ class OmniVoxCasterApp(ctk.CTk):
     def _hotkey_pressed(self):
         if not self.is_processing:
             self.cmd_queue.put("select")
-
-    def _esc_pressed(self):
-        if self.is_processing:
-            self._stop_playback = True
-            sd.stop()
-        else:
-            self.cmd_queue.put("deactivate")
 
     # ----------------------------------------------------------
     #  QUEUE-POLLING
