@@ -18,7 +18,8 @@ OmniVox Caster turns every dialogue into a cinematic audio experience, powered b
 - **Multiple Voices** — Store and manage several voice profiles, switchable at any time.
 - **Adjustable Speed** — Speaking rate from 0.5× to 2.0×.
 
-<img width="400" height="739" alt="image" src="https://github.com/user-attachments/assets/d587497c-162e-484a-8921-902b48677b35" />
+<img width="401" height="732" alt="image" src="https://github.com/user-attachments/assets/859cf2f3-2363-40e2-96c2-559abd4705d0" />
+
 
 ---
 
