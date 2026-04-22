@@ -286,6 +286,7 @@ TRANSLATIONS = {
         "status_loading":        "◈  Lade Modelle ...",
         "status_ready":          "◈  Systeme bereit — Voxcaster online",
         "status_load_error":     "◈  Ladefehler! Konsole prüfen.",
+        "status_gpu_required":   "◈  NVIDIA-GPU mit CUDA erforderlich",
         "status_active":         "◈  Aktiv  —  [{}] zum Auswählen",
         "status_deactivated":    "◈  Deaktiviert",
         "status_selecting":      "◈  Bereich auswählen ...",
@@ -304,7 +305,7 @@ TRANSLATIONS = {
         "status_repeating":      "◈  Wiederhole Übertragung ...",
         "hw_loading":            "Hardware: Prüfung läuft ...",
         "hw_gpu":                "Hardware: GPU aktiv ({})",
-        "hw_cpu":                "Hardware: CPU aktiv ({})",
+        "hw_cpu":                "Hardware: Nicht unterstützt ({})",
         "hw_unknown":            "Hardware: Unbekannt",
         # Messageboxes
         "no_voice_title":           "Keine Stimmvorlage",
@@ -331,6 +332,8 @@ TRANSLATIONS = {
         "translator_missing_msg":   "Das Modul 'deep-translator' wurde nicht gefunden.\nFehler: {}\n\nBitte starte das Programm neu. Achte darauf, es innerhalb deiner '(venv)' Umgebung zu starten!",
         "no_voice_found":           "Keine Stimme gefunden",
         "hotkey_input":             "Eingabe...",
+        "gpu_required_title":       "NVIDIA-GPU erforderlich",
+        "gpu_required_msg":         "OmniVox Caster unterstützt keine CPU-Ausführung.\n\nBitte installiere bzw. starte die App nur auf einem System mit NVIDIA-GPU, aktuellem Treiber und funktionierender CUDA-Umgebung.\n\nErkannt: {}\nTorch-Build: {}",
     },
     "en": {
         # RecordDialog
@@ -439,6 +442,7 @@ TRANSLATIONS = {
         "status_loading":        "◈  Loading models ...",
         "status_ready":          "◈  Systems ready — Voxcaster online",
         "status_load_error":     "◈  Load error! Check console.",
+        "status_gpu_required":   "◈  NVIDIA GPU with CUDA required",
         "status_active":         "◈  Active  —  [{}] to select",
         "status_deactivated":    "◈  Deactivated",
         "status_selecting":      "◈  Select region ...",
@@ -457,7 +461,7 @@ TRANSLATIONS = {
         "status_repeating":      "◈  Repeating transmission ...",
         "hw_loading":            "Hardware: checking ...",
         "hw_gpu":                "Hardware: GPU active ({})",
-        "hw_cpu":                "Hardware: CPU active ({})",
+        "hw_cpu":                "Hardware: Unsupported ({})",
         "hw_unknown":            "Hardware: unknown",
         # Messageboxes
         "no_voice_title":           "No Voice Sample",
@@ -484,6 +488,8 @@ TRANSLATIONS = {
         "translator_missing_msg":   "The module 'deep-translator' was not found.\nError: {}\n\nPlease restart the program. Make sure to start it within your '(venv)' environment!",
         "no_voice_found":           "No voice found",
         "hotkey_input":             "Input...",
+        "gpu_required_title":       "NVIDIA GPU required",
+        "gpu_required_msg":         "OmniVox Caster does not support CPU execution.\n\nPlease install or run the app only on a system with an NVIDIA GPU, current driver, and working CUDA environment.\n\nDetected: {}\nTorch build: {}",
     },
 }
 
@@ -1549,6 +1555,24 @@ class OmniVoxCasterApp(ctk.CTk):
         cfg.read(cfg_file, encoding="utf-8")
         return cfg
 
+    def _handle_gpu_required(self, runtime):
+        hw_name = runtime.get("hw_name") or "CPU"
+        cuda_build = runtime.get("cuda_build") or "cpu-only"
+        print("[FEHLER] Keine nutzbare NVIDIA-GPU/CUDA-Umgebung gefunden.")
+        if runtime.get("cuda_error") is not None:
+            print(f"[FEHLER] CUDA-Details: {runtime['cuda_error']}")
+
+        self.after(0, self._refresh_hardware_label)
+        self._set_status(t("status_gpu_required"), COLORS["red"])
+        self.after(
+            0,
+            lambda: messagebox.showerror(
+                t("gpu_required_title"),
+                t("gpu_required_msg").format(hw_name, cuda_build),
+            ),
+        )
+        self.after(50, self.destroy)
+
     # ----------------------------------------------------------
     #  MODELLE LADEN
     # ----------------------------------------------------------
@@ -1562,17 +1586,15 @@ class OmniVoxCasterApp(ctk.CTk):
             cuda_build = runtime["cuda_build"] or "cpu-only"
             print(f"[INFO] torch: {torch.__version__}, Build-CUDA: {cuda_build}, Geraet: {hw_name}")
             if device != "cuda":
-                if runtime["cuda_build"] is None:
-                    print("[WARN] CPU-only PyTorch erkannt. Fuer lokale NVIDIA-Systeme install.bat erneut ausfuehren, damit die CUDA-Version installiert wird.")
-                elif runtime["cuda_error"] is not None:
-                    print(f"[WARN] CUDA-Build vorhanden, GPU aber nicht nutzbar: {runtime['cuda_error']}")
+                self._handle_gpu_required(runtime)
+                return
             print("[INFO] Lade TTS-Modell (XTTSv2) ...")
             os.environ["COQUI_TOS_AGREED"] = "1"
-            self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2", gpu=(device == "cuda"))
+            self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2", gpu=True)
             print("[INFO] TTS geladen.")
 
             print("[INFO] Lade OCR-Modell (EasyOCR) ...")
-            self.ocr_reader = easyocr.Reader(["de", "en"], gpu=(device == "cuda"))
+            self.ocr_reader = easyocr.Reader(["de", "en"], gpu=True)
             print("[INFO] OCR geladen.")
 
             if os.path.exists(self.spk_wav):

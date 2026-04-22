@@ -6,7 +6,9 @@ cd /d "%~dp0"
 :: Logfile einrichten
 :: --------------------------------------------------------
 set LOGFILE=%~dp0install.log
+set SUCCESS_MARKER=%~dp0install.ok
 echo. > "%LOGFILE%"
+if exist "%SUCCESS_MARKER%" del "%SUCCESS_MARKER%" >nul 2>&1
 echo [%date% %time%] Installation gestartet >> "%LOGFILE%"
 
 :: Alle Ausgaben zusaetzlich ins Logfile schreiben
@@ -139,22 +141,31 @@ if /I "%VCPP_OK%"=="1" (
 echo.
 
 :: --------------------------------------------------------
-:: Virtuelle Umgebung erstellen
+:: Virtuelle Umgebung immer frisch erstellen
+:: verhindert, dass eine alte CPU-only-Torch-Installation erhalten bleibt
 :: --------------------------------------------------------
-if exist "venv\Scripts\python.exe" (
-    echo  [OK] Virtuelle Umgebung bereits vorhanden.
-) else (
-    echo  [INFO] Erstelle virtuelle Umgebung ...
-    %PYTHON_EXE% -m venv venv >> "%LOGFILE%" 2>&1
-    if errorlevel 1 (
-        echo  [FEHLER] Virtuelle Umgebung konnte nicht erstellt werden.
-        echo  [FEHLER] Details in install.log
-        echo [FEHLER] venv-Erstellung fehlgeschlagen >> "%LOGFILE%"
+if exist "venv" (
+    echo  [INFO] Entferne vorhandene virtuelle Umgebung ...
+    rmdir /s /q "venv" >> "%LOGFILE%" 2>&1
+    if exist "venv" (
+        echo  [FEHLER] Vorhandene virtuelle Umgebung konnte nicht entfernt werden.
+        echo  [FEHLER] Bitte schliesse laufende Python-/OmniVox-Prozesse und starte das Setup erneut.
+        echo [FEHLER] Vorhandenes venv konnte nicht entfernt werden >> "%LOGFILE%"
         pause
         exit /b 1
     )
-    echo  [OK] Virtuelle Umgebung erstellt.
 )
+
+echo  [INFO] Erstelle virtuelle Umgebung ...
+%PYTHON_EXE% -m venv venv >> "%LOGFILE%" 2>&1
+if errorlevel 1 (
+    echo  [FEHLER] Virtuelle Umgebung konnte nicht erstellt werden.
+    echo  [FEHLER] Details in install.log
+    echo [FEHLER] venv-Erstellung fehlgeschlagen >> "%LOGFILE%"
+    pause
+    exit /b 1
+)
+echo  [OK] Virtuelle Umgebung erstellt.
 echo.
 
 :: --------------------------------------------------------
@@ -184,7 +195,41 @@ echo.
 :: --------------------------------------------------------
 :: Abhaengigkeiten installieren
 :: --------------------------------------------------------
+echo  [INFO] Pruefe GPU und installiere PyTorch ...
+echo [STEP] Installiere CUDA-PyTorch >> "%LOGFILE%"
+echo [INFO] Pruefe NVIDIA-Treiber mit nvidia-smi >> "%LOGFILE%"
+nvidia-smi >> "%LOGFILE%" 2>&1
+
+echo  [INFO] Installiere CUDA-Version von PyTorch ...
+echo [INFO] PyTorch CUDA >> "%LOGFILE%"
+echo.
+venv\Scripts\pip.exe uninstall -y torch torchaudio torchvision >nul 2>&1
+venv\Scripts\pip.exe install --upgrade --force-reinstall --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128 >> "%LOGFILE%" 2>&1
+
+if errorlevel 1 (
+    echo  [FEHLER] PyTorch CUDA konnte nicht installiert werden. Details in install.log
+    echo [FEHLER] PyTorch-CUDA-Install fehlgeschlagen >> "%LOGFILE%"
+    pause
+    exit /b 1
+)
+echo  [OK] PyTorch installiert.
+venv\Scripts\python.exe -c "import torch; print('[INFO] Torch-Version:', torch.__version__); print('[INFO] Torch-CUDA-Build:', torch.version.cuda or 'cpu-only'); print('[INFO] CUDA verfuegbar:', torch.cuda.is_available())"
+venv\Scripts\python.exe -c "import sys, torch; sys.exit(0 if (torch.version.cuda and torch.cuda.is_available()) else 1)"
+if errorlevel 1 (
+    echo  [FEHLER] CUDA-PyTorch wurde installiert, aber die GPU ist nicht nutzbar.
+    echo  [HINWEIS] Bitte NVIDIA-Treiber/CUDA-Laufzeit pruefen und Setup erneut starten.
+    echo [FEHLER] CUDA-PyTorch nach Installation nicht nutzbar >> "%LOGFILE%"
+    pause
+    exit /b 1
+)
+echo  [OK] CUDA ist aktiv und nutzbar.
+echo.
+
+:: --------------------------------------------------------
+:: Abhaengigkeiten installieren
+:: --------------------------------------------------------
 echo  [INFO] Installiere Abhaengigkeiten ...
+echo [STEP] Installiere Abhaengigkeiten >> "%LOGFILE%"
 venv\Scripts\pip.exe install numpy==1.26.4 pandas==1.5.3 mss easyocr keyboard customtkinter sounddevice soundfile pydub transformers==4.39.3 deep-translator langdetect >> "%LOGFILE%" 2>&1
 
 if errorlevel 1 (
@@ -197,6 +242,7 @@ echo  [OK] Abhaengigkeiten installiert.
 echo.
 
 echo  [INFO] Installiere TTS (Coqui XTTSv2) ...
+echo [STEP] Installiere TTS >> "%LOGFILE%"
 set PYTHONPATH=%~dp0venv\Lib\site-packages
 venv\Scripts\pip.exe install TTS==0.22.0 --no-build-isolation >> "%LOGFILE%" 2>&1
 set PYTHONPATH=
@@ -210,36 +256,27 @@ echo  [OK] TTS installiert.
 echo.
 
 :: --------------------------------------------------------
-:: PyTorch installieren - NACH allen anderen Paketen
+:: CUDA-PyTorch am Ende nochmals erzwingen
+:: einige Pakete koennen waehrend der Installation wieder CPU-Torch nachziehen
 :: --------------------------------------------------------
-echo  [INFO] Pruefe GPU und installiere PyTorch ...
-set GPU_BACKEND=cpu
-
-call :detect_nvidia_gpu
-
-if /I "%GPU_BACKEND%"=="cuda" (
-    echo  [OK] NVIDIA GPU gefunden - installiere CUDA-Version.
-    echo [INFO] PyTorch CUDA >> "%LOGFILE%"
-    echo.
-    venv\Scripts\pip.exe uninstall -y torch torchaudio torchvision >nul 2>&1
-    venv\Scripts\pip.exe install --upgrade --force-reinstall torch torchaudio torchvision --index-url https://download.pytorch.org/whl/cu128 >> "%LOGFILE%" 2>&1
-) else (
-    echo  [INFO] Keine NVIDIA GPU gefunden - installiere CPU-Version.
-    echo  [INFO] Die App funktioniert, ist aber langsamer.
-    echo [INFO] PyTorch CPU >> "%LOGFILE%"
-    echo.
-    venv\Scripts\pip.exe uninstall -y torch torchaudio torchvision >nul 2>&1
-    venv\Scripts\pip.exe install --upgrade --force-reinstall torch torchaudio torchvision --index-url https://download.pytorch.org/whl/cpu >> "%LOGFILE%" 2>&1
-)
-
+echo  [INFO] Erzwinge abschliessend nochmals CUDA-PyTorch ...
+echo [STEP] Erzwinge abschliessend CUDA-PyTorch >> "%LOGFILE%"
+venv\Scripts\pip.exe uninstall -y torch torchaudio torchvision >nul 2>&1
+venv\Scripts\pip.exe install --upgrade --force-reinstall --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128 >> "%LOGFILE%" 2>&1
 if errorlevel 1 (
-    echo  [FEHLER] PyTorch konnte nicht installiert werden. Details in install.log
-    echo [FEHLER] PyTorch-Install fehlgeschlagen >> "%LOGFILE%"
+    echo  [FEHLER] Abschliessende CUDA-PyTorch-Installation fehlgeschlagen. Details in install.log
+    echo [FEHLER] Abschliessende CUDA-PyTorch-Installation fehlgeschlagen >> "%LOGFILE%"
     pause
     exit /b 1
 )
-echo  [OK] PyTorch installiert.
-venv\Scripts\python.exe -c "import torch; print('[INFO] Torch-Version:', torch.__version__); print('[INFO] Torch-CUDA-Build:', torch.version.cuda or 'cpu-only'); print('[INFO] CUDA verfuegbar:', torch.cuda.is_available())"
+venv\Scripts\python.exe -c "import sys, torch; print('[INFO] Finale Torch-Version:', torch.__version__); print('[INFO] Finale Torch-CUDA-Build:', torch.version.cuda or 'cpu-only'); print('[INFO] Finale CUDA-Verfuegbarkeit:', torch.cuda.is_available()); sys.exit(0 if (torch.version.cuda and torch.cuda.is_available()) else 1)"
+if errorlevel 1 (
+    echo  [FEHLER] Finale Pruefung fehlgeschlagen: Es ist keine nutzbare CUDA-Torch-Installation vorhanden.
+    echo [FEHLER] Finale CUDA-Pruefung fehlgeschlagen >> "%LOGFILE%"
+    pause
+    exit /b 1
+)
+echo  [OK] Finale CUDA-Pruefung erfolgreich.
 echo.
 
 :: --------------------------------------------------------
@@ -258,6 +295,7 @@ echo  [OK] NumPy 1.26.4 und Pandas 1.5.3 wiederhergestellt.
 echo.
 
 echo [%date% %time%] Installation erfolgreich abgeschlossen >> "%LOGFILE%"
+echo success>"%SUCCESS_MARKER%"
 
 echo  ================================================
 echo   Installation abgeschlossen!
@@ -292,20 +330,4 @@ if not errorlevel 1 ( set VCPP_OK=1 & goto :eof )
 reg query "HKLM\SOFTWARE\Microsoft\VisualStudio\SxS\VS7" >nul 2>&1
 if not errorlevel 1 ( set VCPP_OK=1 & goto :eof )
 
-goto :eof
-
-:: --------------------------------------------------------
-:: NVIDIA GPU erkennen
-:: --------------------------------------------------------
-:detect_nvidia_gpu
-nvidia-smi >nul 2>&1
-if not errorlevel 1 ( set GPU_BACKEND=cuda & goto :eof )
-
-if exist "%ProgramFiles%\NVIDIA Corporation\NVSMI\nvidia-smi.exe" (
-    "%ProgramFiles%\NVIDIA Corporation\NVSMI\nvidia-smi.exe" >nul 2>&1
-    if not errorlevel 1 ( set GPU_BACKEND=cuda & goto :eof )
-)
-
-powershell -NoProfile -ExecutionPolicy Bypass -Command "$gpus = Get-CimInstance Win32_VideoController | Where-Object { $_.Name -match 'NVIDIA' }; if ($gpus) { exit 0 } else { exit 1 }" >nul 2>&1
-if not errorlevel 1 ( set GPU_BACKEND=cuda )
 goto :eof

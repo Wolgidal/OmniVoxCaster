@@ -11,3 +11,11 @@ config.ini
 
 # Temporäre Dateien
 temp_rec.wav
+
+# Logs
+*.log
+startup.log
+install.log
+
+# Installer-Output
+installer_output/

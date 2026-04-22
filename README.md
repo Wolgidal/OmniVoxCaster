@@ -22,6 +22,13 @@ OmniVox Caster turns every dialogue into a cinematic audio experience, powered b
 
 ---
 
+## Download
+
+**[⬇ OmniVoxCaster_v0.5_Setup.exe](https://github.com/Wolgidal/OmniVoxCaster/releases/download/v0.5/OmniVoxCaster_v0.5_Setup.exe)**  
+Windows Installer — double-click and follow the wizard. No manual setup required.
+
+---
+
 ## Installation (Windows)
 
 ### Requirements

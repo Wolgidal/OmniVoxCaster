@@ -39,8 +39,11 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Messages]
 german.WelcomeLabel1=Willkommen beim Setup von [name]
-german.WelcomeLabel2=Dieses Programm installiert [name/ver] auf Ihrem Computer.%n%nBeim ersten Start werden KI-Modelle heruntergeladen (~2 GB). Eine Internetverbindung ist erforderlich.%n%nEs wird empfohlen, alle anderen Programme zu beenden, bevor Sie fortfahren.
-german.FinishedLabel=Die Installation von [name] wurde abgeschlossen.%n%nDie App kann jetzt über das Startmenü oder den Desktop gestartet werden.%n%nHinweis: Beim ersten Start werden KI-Modelle heruntergeladen (~2 GB).
+german.WelcomeLabel2=Dieses Programm installiert [name/ver] auf Ihrem Computer.%n%nWICHTIG: Fuer den Betrieb ist eine NVIDIA-GPU mit aktuellem Treiber und funktionierender CUDA-Umgebung erforderlich. Eine CPU-Installation wird nicht unterstuetzt.%n%nBeim ersten Start werden KI-Modelle heruntergeladen (~2 GB). Eine Internetverbindung ist erforderlich.%n%nEs wird empfohlen, alle anderen Programme zu beenden, bevor Sie fortfahren.
+german.FinishedLabel=Die Installation von [name] wurde abgeschlossen.%n%nDie App kann jetzt über das Startmenü oder den Desktop gestartet werden.%n%nWichtig: Stelle sicher, dass auf diesem System eine NVIDIA-GPU mit aktuellem Treiber verfügbar ist. Ohne nutzbare CUDA-Umgebung startet OmniVox Caster nicht.%n%nHinweis: Beim ersten Start werden KI-Modelle heruntergeladen (~2 GB).
+english.WelcomeLabel1=Welcome to the [name] Setup Wizard
+english.WelcomeLabel2=This program installs [name/ver] on your computer.%n%nIMPORTANT: An NVIDIA GPU with an up-to-date driver and a working CUDA environment is required. CPU-only installation is not supported.%n%nOn first launch, AI models will be downloaded (~2 GB). An internet connection is required.%n%nIt is recommended that you close all other applications before continuing.
+english.FinishedLabel=Installation of [name] is complete.%n%nThe app can now be launched from the Start menu or desktop shortcut.%n%nImportant: Make sure this system has an NVIDIA GPU with a current driver available. Without a working CUDA environment, OmniVox Caster will not start.%n%nNote: On first launch, AI models will be downloaded (~2 GB).
 
 [Tasks]
 Name: "desktopicon"; Description: "Desktop-Verknüpfung erstellen"; GroupDescription: "Zusätzliche Symbole:"; Flags: unchecked
@@ -66,7 +69,7 @@ Name: "{autodesktop}\{#AppName}";   Filename: "{app}\start.bat";         IconFil
 
 [Run]
 ; Python-Umgebung nach der Dateiextraktion einrichten
-Filename: "{app}\install_setup.bat"; \
+Filename: "{cmd}"; Parameters: "/c ""{app}\install_setup.bat"""; \
     Description: "Python-Umgebung einrichten (Abhängigkeiten installieren)"; \
     Flags: waituntilterminated; \
     StatusMsg: "Installiere Abhängigkeiten (kann einige Minuten dauern) ..."
@@ -75,7 +78,8 @@ Filename: "{app}\install_setup.bat"; \
 Filename: "{app}\start.bat"; \
     Description: "{#AppName} jetzt starten"; \
     Flags: nowait postinstall skipifsilent unchecked; \
-    WorkingDir: "{app}"
+    WorkingDir: "{app}"; \
+    Check: FileExists(ExpandConstant('{app}\install.ok'))
 
 [UninstallRun]
 ; Virtuelle Umgebung und Cache bereinigen
