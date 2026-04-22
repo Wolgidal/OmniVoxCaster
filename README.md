@@ -50,25 +50,44 @@ Click **Code → Download ZIP** on GitHub, then extract the folder.
 
 ---
 
-### Step 2 — Run install.bat
+### Option A — Windows Installer (recommended)
 
-Double-click **`install.bat`** in the extracted folder.
+Download **`OmniVoxCaster_v0.5_Setup.exe`** from the [Releases](https://github.com/Wolgidal/OmniVoxCaster/releases) page and double-click it.
 
-The installer will automatically:
-1. Install Python 3.11 if no compatible version is found (3.10 or 3.11)
-2. Create a virtual Python environment (`venv\`)
-3. Install all dependencies
-4. Detect your GPU and install the correct PyTorch version (CUDA or CPU)
+The installer will:
+1. Let you choose an install location
+2. Automatically install Python 3.11 if missing
+3. Check for and install Visual C++ Build Tools if needed
+4. Install all dependencies into a local virtual environment
+5. Detect your GPU (CUDA or CPU)
+6. Create Start Menu and optional Desktop shortcuts
 
 This takes several minutes. Internet connection required.
 
 ---
 
-### Step 3 — Start the app
+### Option B — Manual (from source)
 
-Double-click **`start.bat`**
+Double-click **`install.bat`** in the extracted folder.
+
+The installer will automatically:
+1. Install Python 3.11 if no compatible version is found (3.10 or 3.11)
+2. Check for and install Visual C++ Build Tools if needed
+3. Create a virtual Python environment (`venv\`)
+4. Install all dependencies
+5. Detect your GPU and install the correct PyTorch version (CUDA or CPU)
+
+Then start the app with **`start.bat`**.
+
+This takes several minutes. Internet connection required.
+
+---
+
+### Step 3 — First launch
 
 On first launch, the AI models are downloaded automatically (~2 GB). This happens only once.
+
+> If anything goes wrong, check **`install.log`** in the app folder for details.
 
 ---
 

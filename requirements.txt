@@ -11,6 +11,7 @@ keyboard
 customtkinter
 sounddevice
 soundfile
+Pillow
 pydub
 deep-translator
 langdetect

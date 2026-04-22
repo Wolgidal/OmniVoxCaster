@@ -103,7 +103,7 @@ echo  [FEHLER] Python 3.11 konnte nicht automatisch installiert werden.
 echo           Bitte manuell installieren: https://www.python.org/downloads/release/python-3119/
 echo           Wichtig: Haken bei "Add Python to PATH" setzen!
 echo [FEHLER] Python-Installation fehlgeschlagen >> "%LOGFILE%"
-pause
+exit /b 0
 exit /b 1
 
 :python_ok
@@ -270,7 +270,7 @@ echo.
 echo   Protokoll: install.log
 echo  ================================================
 echo.
-pause
+exit /b 0
 goto :eof
 
 :: --------------------------------------------------------

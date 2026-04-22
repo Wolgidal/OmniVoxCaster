@@ -71,12 +71,14 @@ from tkinter import filedialog, messagebox
 import customtkinter as ctk
 import sounddevice as sd
 import soundfile as sf
+from PIL import Image, ImageTk
 
 # ============================================================
 #  KONSTANTEN
 # ============================================================
 APP_DIR     = os.path.dirname(os.path.abspath(__file__))
 APPDATA_DIR = os.path.join(os.environ.get("APPDATA", APP_DIR), "OmniVoxCaster")
+ASSETS_DIR  = os.path.join(APP_DIR, "assets")
 os.makedirs(APPDATA_DIR, exist_ok=True)
 SAMPLE_RATE = 22050
 VERSION     = "0.5"
@@ -895,7 +897,10 @@ class OmniVoxCasterApp(ctk.CTk):
         self.cmd_queue         = queue.Queue()
         self.runtime_info      = None
         self.translators       = {}
+        self._window_icon      = None
+        self._title_icon       = None
 
+        self._load_icon_assets()
         self._setup_window()
         self._build_ui()
 
@@ -925,6 +930,20 @@ class OmniVoxCasterApp(ctk.CTk):
     # ----------------------------------------------------------
     #  FENSTER & UI
     # ----------------------------------------------------------
+    def _load_icon_assets(self):
+        icon_ico = os.path.join(ASSETS_DIR, "omni_icon.ico")
+        icon_png = os.path.join(ASSETS_DIR, "omni_icon.png")
+
+        if os.path.exists(icon_png):
+            try:
+                img = Image.open(icon_png)
+                self._window_icon = ImageTk.PhotoImage(img)
+                self._title_icon = ctk.CTkImage(light_image=img, dark_image=img, size=(30, 30))
+            except Exception as exc:
+                print(f"[WARN] Icon konnte nicht geladen werden: {exc}")
+
+        self._icon_ico_path = icon_ico if os.path.exists(icon_ico) else None
+
     def _setup_window(self):
         self.title(f"OmniVox Caster  v{VERSION}")
         self.geometry("400x700")
@@ -932,6 +951,16 @@ class OmniVoxCasterApp(ctk.CTk):
         self.configure(fg_color=COLORS["bg"])
         self.attributes("-topmost", True)
         self.attributes("-alpha", 0.97)
+        if self._icon_ico_path:
+            try:
+                self.iconbitmap(self._icon_ico_path)
+            except Exception:
+                pass
+        if self._window_icon is not None:
+            try:
+                self.iconphoto(True, self._window_icon)
+            except Exception:
+                pass
         self.protocol("WM_DELETE_WINDOW", self._on_close)
 
     def _on_close(self):
